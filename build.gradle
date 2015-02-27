@@ -1,0 +1,52 @@
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'maven-publish'
+
+group = 'gameover.fwk'
+version = '0.1.0-SNAPSHOT'
+
+ext {
+  gdxVersion = '1.5.4'
+}
+
+sourceCompatibility = JavaVersion.VERSION_1_6
+targetCompatibility = JavaVersion.VERSION_1_6
+
+dependencies {
+    compile "com.badlogicgames.gdx:gdx:$gdxVersion"
+}
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allJava
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            artifactId 'fwk'
+
+            from components.java
+            artifact sourceJar {
+                classifier "sources"
+            }
+        }
+    }
+}
+
+configurations {
+  deployerJars
+}
+
+repositories {
+  mavenLocal()
+  mavenCentral()
+  maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+}
+
+idea {
+  module {
+      name = "gameover-fwk"
+      downloadJavadoc = false
+      downloadSources = true
+  }
+}
