@@ -1,12 +1,23 @@
-apply plugin: 'java'
+buildscript {
+    repositories {
+        mavenCentral()
+        mavenLocal()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:1.1.1'
+    }
+}
+
+apply plugin: 'scala'
 apply plugin: 'idea'
 apply plugin: 'maven-publish'
 
 group = 'gameover.fwk'
-version = '0.1.0-SNAPSHOT'
+version = '0.2.0-SNAPSHOT'
 
 ext {
   gdxVersion = '1.5.4'
+  scalaVersion = '2.11.5'
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_6
@@ -14,6 +25,18 @@ targetCompatibility = JavaVersion.VERSION_1_6
 
 dependencies {
     compile "com.badlogicgames.gdx:gdx:$gdxVersion"
+    compile "org.scala-lang:scala-library:$scalaVersion"
+}
+
+compileScala {
+    scalaCompileOptions.useCompileDaemon = true
+
+    // optionally specify host and port of the daemon:
+    scalaCompileOptions.daemonServer = "localhost:4243"
+}
+
+tasks.withType(ScalaCompile) {
+    scalaCompileOptions.useAnt = false
 }
 
 task sourceJar(type: Jar) {
