@@ -2,6 +2,7 @@ package gameover.fwk.ai
 
 import com.badlogic.gdx.math.{GridPoint2, MathUtils, Rectangle, Vector2}
 import com.badlogic.gdx.utils.Array
+import gameover.fwk.libgdx.GdxArray
 import gameover.fwk.libgdx.utils.LibGDXHelper
 import gameover.fwk.pool.{GridPoint2Pool, Vector2Pool}
 
@@ -27,7 +28,7 @@ class AStar(hComputeStrategy: HComputeStrategy) extends LibGDXHelper {
    * @return an array of tiles indices to reach path
    */
   def findPath(x: Float, y: Float, tx: Float, ty: Float, findNearestPoint: Boolean, collisionDetector: CollisionDetector): GdxArray[GridPoint2] = {
-    val ret: Array[GridPoint2] = new GdxArray[GridPoint2]
+    val ret: GdxArray[GridPoint2] = new GdxArray[GridPoint2]
     val ix: Int = MathUtils.floor(x)
     val iy: Int = MathUtils.floor(y)
     val itx: Int = MathUtils.floor(tx)
@@ -51,18 +52,26 @@ class AStar(hComputeStrategy: HComputeStrategy) extends LibGDXHelper {
     }
   }
 
-  def findSmoothPath(area: Rectangle, x: Float, y: Float, tx: Float, ty: Float, findNearestPoint: Boolean, collisionDetector: CollisionDetector): Array[Vector2] = {
-    val path: Array[GridPoint2] = findPath(x, y, tx, ty, findNearestPoint, collisionDetector)
-    val smoothPath: Array[Vector2] = new Array[Vector2]
-    computePointForSmoothPathAuxRecursively(area, path, 0, MathUtils.floor(x), MathUtils.floor(y), smoothPath)
+  def findSmoothPath(area: Rectangle, tx: Float, ty: Float, findNearestPoint: Boolean, collisionDetector: CollisionDetector): GdxArray[Vector2] = {
+    val center = area.getCenter(Vector2Pool.obtain())
+    val path: GdxArray[GridPoint2] = findPath(center.x, center.y, tx, ty, findNearestPoint, collisionDetector)
+    val smoothPath: GdxArray[Vector2] = new GdxArray[Vector2]
+    computePointForSmoothPathAuxRecursively(area, path, 0, MathUtils.floor(center.x), MathUtils.floor(center.y), smoothPath)
     if (path.size > 0) {
       val last: GridPoint2 = path.get(path.size - 1)
       if (MathUtils.floor(tx) == last.x && MathUtils.floor(ty) == last.y) smoothPath.add(Vector2Pool.obtain(tx, ty))
     }
-    return smoothPath
+    Vector2Pool.free(center)
+    smoothPath
   }
 
-  private def computePointForSmoothPathAuxRecursively(area: Rectangle, path: Array[GridPoint2], i: Int, previousTileX: Int, previousTileY: Int, smoothPath: Array[Vector2]) {
+  private def computePointForSmoothPathAuxRecursively(
+                                                       area: Rectangle,
+                                                       path: GdxArray[GridPoint2],
+                                                       i: Int,
+                                                       previousTileX: Int,
+                                                       previousTileY: Int,
+                                                       smoothPath: GdxArray[Vector2]) {
     if (i < path.size - 1) {
       val tile: GridPoint2 = path.get(i)
       val nextTile: GridPoint2 = path.get(i + 1)
@@ -153,14 +162,14 @@ class AStar(hComputeStrategy: HComputeStrategy) extends LibGDXHelper {
     for (p <- points) {
       if (p.is(x, y)) return true
     }
-    return false
+    false
   }
 
-  def find(x: Int, y: Int, points: List[Point]): Point = {
+  def find(x: Int, y: Int, points: List[Point]): Option[Point] = {
     for (p <- points) {
-      if (p.is(x, y)) return p
+      if (p.is(x, y)) return Some(p)
     }
-    return null
+    None
   }
 
   private def processPath(tx: Int, ty: Int, collisionDetector: CollisionDetector, ancestor: Point, hComputeStrategy: HComputeStrategy): Option[Point] = {
@@ -191,18 +200,18 @@ class AStar(hComputeStrategy: HComputeStrategy) extends LibGDXHelper {
     if (find(x, y, closed) == null) {
       try {
         if (!collisionDetector.checkCollision(x, y, onlyBlocking = false)) {
-          val found: Point = find(x, y, opened)
+          val found: Option[Point] = find(x, y, opened)
           var g: Int = 0
           if (ancestor.isDefined) {
             g = if ((ancestor.get.x == x) || (ancestor.get.y == y)) 10 else 14
           }
           val h: Int = hComputeStrategy.h(x, y, targetX, targetY, collisionDetector)
-          if (found != null) {
-            p = found
-            if (g + h < found.f) {
-              found.g = g
-              found.h = h
-              found.ancestor = ancestor
+          if (found.isDefined) {
+            p = found.get
+            if (g + h < p.f) {
+              p.g = g
+              p.h = h
+              p.ancestor = ancestor
             }
           }
           else {

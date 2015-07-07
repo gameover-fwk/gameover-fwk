@@ -1,6 +1,7 @@
 package gameover.fwk.pool
 
 import com.badlogic.gdx.utils.Pool
+import gameover.fwk.libgdx.GdxArray
 import gameover.fwk.libgdx.utils.LibGDXHelper
 
 import scala.reflect.ClassTag
@@ -22,8 +23,7 @@ trait ObjectPool[T] extends LibGDXHelper {
   }
 
   def free(a: GdxArray[T]) {
-    for (i <- 0 to a.size -1)
-      free(a.get(i))
+    a.foreach(free)
   }
 
   def free(l: List[T]) {
@@ -38,12 +38,7 @@ trait ObjectPool[T] extends LibGDXHelper {
 
   def obtainAsArray[T:ClassTag](nb: Int): Array[T] = Array.fill[T](nb)(obtain().asInstanceOf[T])
 
-  def obtainAsGdxArray(nb: Int): GdxArray[T] = {
-    val array = new GdxArray[T](nb)
-    for (i <- 0 to nb -1)
-      array.set(i, obtain())
-    array
-  }
+  def obtainAsGdxArray(nb: Int): GdxArray[T] =  GdxArray.fill[T](nb)(obtain())
 
   def obtainAsList(nb: Int): List[T] = List.fill(nb)(obtain())
 }

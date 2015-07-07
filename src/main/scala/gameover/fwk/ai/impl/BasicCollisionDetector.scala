@@ -2,13 +2,17 @@ package gameover.fwk.ai.impl
 
 import com.badlogic.gdx.math.{Rectangle, Vector2}
 import gameover.fwk.ai.CollisionDetector
+import gameover.fwk.libgdx.GdxArray
 import gameover.fwk.libgdx.gfx.GeometryUtils
-import gameover.fwk.libgdx.utils.LibGDXHelper
 import gameover.fwk.pool.Vector2Pool
 
-abstract class BasicCollisionDetector extends CollisionDetector with LibGDXHelper {
+abstract class BasicCollisionDetector extends CollisionDetector{
 
-  override def isDirect(area: Rectangle, x: Float, y: Float, targetX: Float, targetY: Float, onlyWalls: Boolean): Boolean = {
+  override def isDirect(area: Rectangle, targetX: Float, targetY: Float, onlyBlocking: Boolean): Boolean = {
+    val center: Vector2 = area.getCenter(Vector2Pool.obtain())
+    val x = center.x
+    val y = center.y
+    Vector2Pool.free(center)
     val isGoingTop: Boolean = Math.signum(targetY - y) >= 0f
     val isGoingRight: Boolean = Math.signum(targetX - x) >= 0f
     val diffX1: Float = if (isGoingRight) area.width + area.x else area.x
@@ -18,21 +22,23 @@ abstract class BasicCollisionDetector extends CollisionDetector with LibGDXHelpe
     val diffY2: Float = if (isGoingTop) area.height + area.y else area.y
     intersectionPoints.addAll(GeometryUtils.computeTiledIntersectionPoints(x + diffX2, y + diffY2, targetX + diffX2, targetY + diffY2))
     try {
-      !checkCollisions(intersectionPoints, onlyWalls)
+      !checkCollisions(intersectionPoints, onlyBlocking)
     } finally {
       Vector2Pool.free(intersectionPoints)
     }
   }
 
-  private def checkCollisions(intersections: Iterable[Vector2], onlyWalls: Boolean): Boolean = {
+  private def checkCollisions(intersections: Iterable[Vector2], onlyBlocking: Boolean): Boolean = {
     for (intersection <- intersections) {
       if (Math.floor(intersection.x) == intersection.x) {
-        if (checkCollision(intersection.x.toInt, Math.floor(intersection.y).toInt, onlyWalls) || checkCollision(intersection.x.toInt - 1, Math.floor(intersection.y).toInt, onlyWalls)) {
+        if (checkCollision(intersection.x, Math.floor(intersection.y).toFloat, onlyBlocking) ||
+          checkCollision(intersection.x - 1, Math.floor(intersection.y).toFloat, onlyBlocking)) {
           return true
         }
       }
       if (Math.floor(intersection.y) == intersection.y) {
-        if (checkCollision(Math.floor(intersection.x).toInt, intersection.y.toInt, onlyWalls) || checkCollision(Math.floor(intersection.x).toInt, intersection.y.toInt - 1, onlyWalls)) {
+        if (checkCollision(Math.floor(intersection.x).toFloat, intersection.y, onlyBlocking) ||
+          checkCollision(Math.floor(intersection.x).toFloat, intersection.y - 1, onlyBlocking)) {
           return true
         }
       }

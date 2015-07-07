@@ -14,7 +14,7 @@ import scala.collection.mutable
  * This singleton is used to managed all graphics resources, responsible to load them
  * and reference them through a key.
  */
-object GraphicsLoader extends Disposable with LibGDXHelper with Logs {
+object GraphicsLoader extends Disposable with Logs with LibGDXHelper {
   private val animations = new mutable.HashMap[String, Animation]()
   private val pixmaps = new mutable.HashMap[String, Pixmap]()
   private val textures = new mutable.HashMap[String, Texture]()
@@ -148,9 +148,9 @@ object GraphicsLoader extends Disposable with LibGDXHelper with Logs {
     if (animationFile != null && animationFile.exists) {
       val texture: Texture = new Texture(animationFile)
       val regions: Array[Array[TextureRegion]] = TextureRegion.split(texture, width, height)
-      val animArray = new GdxArray[TextureRegion](regions(0).length)
+      val animArray = new BadlogicGdxArray[TextureRegion](regions(0).length)
       for (i <- regions(0).indices) {
-        animArray(i) = regions(0)(i)
+        animArray.set(i, regions(0)(i))
       }
       val animation: Animation = new Animation(frameDuration, animArray)
       if (playMode != null) {
@@ -164,9 +164,9 @@ object GraphicsLoader extends Disposable with LibGDXHelper with Logs {
     if (animationFile != null && animationFile.exists) {
       val texture = new Texture(animationFile)
       val regions = TextureRegion.split(texture, width, height)
-      val animArray = new GdxArray[TextureRegion](index.length)
+      val animArray = new BadlogicGdxArray[TextureRegion](index.length)
       for (i <- index) {
-        animArray(i) = regions(0)(i)
+        animArray.set(i, regions(0)(i))
       }
       val animation = new Animation(frameDuration, animArray)
       animation.setPlayMode(playMode)

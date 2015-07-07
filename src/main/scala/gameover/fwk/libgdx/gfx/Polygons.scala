@@ -1,10 +1,10 @@
 package gameover.fwk.libgdx.gfx
 
 import com.badlogic.gdx.math.{Polygon, Vector2}
-import gameover.fwk.libgdx.utils.LibGDXHelper
+import gameover.fwk.libgdx.GdxArray
 import gameover.fwk.pool.Vector2Pool
 
-object Polygons extends LibGDXHelper {
+object Polygons {
 
   def createArcAsPolygon(x: Float, y: Float, radius: Float, start: Float, angle: Float, segments: Int): Polygon = {
     if (segments < 1) throw new IllegalArgumentException("arc need at least 1 segment")
@@ -26,11 +26,15 @@ object Polygons extends LibGDXHelper {
     new Polygon(vertices)
   }
 
-  def isPointInPolygon(polygon: Array[(Float, Float)], pointX: Float, pointY: Float): Boolean = {
-    var (lastVerticeX, lastVerticeY) = polygon(polygon.length - 1)
+  def isPointInPolygon(polygon: GdxArray[Vector2], pointX: Float, pointY: Float): Boolean = {
+    val lastVertice: Vector2 = polygon.get(polygon.size - 1)
+    var lastVerticeX = lastVertice.x
+    var lastVerticeY = lastVertice.y
     var oddNodes: Boolean = false
     for (i <- polygon.indices) {
-      val (x, y) = polygon(i)
+      val v: Vector2 = polygon.get(i)
+      val x = v.x
+      val y = v.y
       if (y < pointY && lastVerticeY >= pointY || lastVerticeY < pointY && y >= pointY) {
         if (x + (pointY - y) / (lastVerticeY - y) * (lastVerticeX - x) < pointX) {
           oddNodes = !oddNodes
@@ -54,7 +58,7 @@ object Polygons extends LibGDXHelper {
       ret = Vector2Pool.obtainAsGdxArray(segments + 1)
     }
     else {
-      ret = new GdxArray[Vector2](segments + 1)
+      ret = GdxArray[Vector2](segments + 1)
       for (i <- 0 to segments) {
         ret.add(new Vector2)
       }
