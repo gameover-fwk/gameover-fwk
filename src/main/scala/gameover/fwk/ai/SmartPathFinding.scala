@@ -1,7 +1,7 @@
 package gameover.fwk.ai
 
 import com.badlogic.gdx.math.{Rectangle, Vector2}
-import gameover.fwk.libgdx.GdxArray
+import gameover.fwk.libgdx.collection.GdxArray
 import gameover.fwk.pool.Vector2Pool
 
 /**

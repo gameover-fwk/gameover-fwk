@@ -2,7 +2,7 @@ package gameover.fwk.ai
 
 import com.badlogic.gdx.math.{GridPoint2, MathUtils, Rectangle, Vector2}
 import com.badlogic.gdx.utils.Array
-import gameover.fwk.libgdx.GdxArray
+import gameover.fwk.libgdx.collection.GdxArray
 import gameover.fwk.libgdx.utils.LibGDXHelper
 import gameover.fwk.pool.{GridPoint2Pool, Vector2Pool}
 

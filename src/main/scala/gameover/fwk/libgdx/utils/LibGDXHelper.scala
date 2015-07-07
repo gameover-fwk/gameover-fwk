@@ -1,7 +1,7 @@
 package gameover.fwk.libgdx.utils
 
 import com.badlogic.gdx.math.GridPoint2
-import gameover.fwk.libgdx.GdxArray
+import gameover.fwk.libgdx.collection.GdxArray
 
 import scala.reflect.ClassTag
 

@@ -1,4 +1,4 @@
-package gameover.fwk.libgdx
+package gameover.fwk.libgdx.collection
 
 import java.util.Comparator
 

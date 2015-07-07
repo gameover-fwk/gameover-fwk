@@ -1,7 +1,7 @@
 package gameover.fwk.pool
 
 import com.badlogic.gdx.utils.Pool
-import gameover.fwk.libgdx.GdxArray
+import gameover.fwk.libgdx.collection.GdxArray
 import gameover.fwk.libgdx.utils.LibGDXHelper
 
 import scala.reflect.ClassTag

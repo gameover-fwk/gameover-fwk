@@ -3,7 +3,7 @@ package gameover.fwk.ai.impl
 import com.badlogic.gdx.maps.tiled.{TiledMap, TiledMapTileLayer}
 import com.badlogic.gdx.maps.{MapLayer, MapLayers}
 import com.badlogic.gdx.math.{Intersector, Rectangle, Vector2}
-import gameover.fwk.libgdx.GdxArray
+import gameover.fwk.libgdx.collection.GdxArray
 import gameover.fwk.libgdx.gfx.GeometryUtils
 import gameover.fwk.pool.{RectanglePool, Vector2Pool}
 

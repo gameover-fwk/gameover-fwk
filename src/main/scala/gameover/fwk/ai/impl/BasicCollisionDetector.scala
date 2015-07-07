@@ -2,7 +2,7 @@ package gameover.fwk.ai.impl
 
 import com.badlogic.gdx.math.{Rectangle, Vector2}
 import gameover.fwk.ai.CollisionDetector
-import gameover.fwk.libgdx.GdxArray
+import gameover.fwk.libgdx.collection.GdxArray
 import gameover.fwk.libgdx.gfx.GeometryUtils
 import gameover.fwk.pool.Vector2Pool
 

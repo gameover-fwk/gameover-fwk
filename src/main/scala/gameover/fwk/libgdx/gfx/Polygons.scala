@@ -1,7 +1,7 @@
 package gameover.fwk.libgdx.gfx
 
 import com.badlogic.gdx.math.{Polygon, Vector2}
-import gameover.fwk.libgdx.GdxArray
+import gameover.fwk.libgdx.collection.GdxArray
 import gameover.fwk.pool.Vector2Pool
 
 object Polygons {
