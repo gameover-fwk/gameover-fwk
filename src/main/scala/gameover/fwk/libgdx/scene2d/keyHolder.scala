@@ -7,17 +7,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Button
  * This helper class can be used to check if a key was just pressed. the key can be a keyboard key or a
  * {@link com.badlogic.gdx.scenes.scene2d.ui.Button} on a screen.
  */
-object KeyHolder {
-  def apply(keyCode: Int) {
-    new KeyboardKeyHolder(keyCode)
-  }
-
-  def apply(button: Button) {
-    new ButtonHolder(button)
-  }
+object Holder {
+  def apply(keyCode: Int) : Holder = new KeyboardKeyHolder(keyCode)
+  def apply(button: Button) : Holder = new ButtonHolder(button)
 }
 
-abstract private class Holder {
+abstract class Holder {
   var keyPressedStartTime: Float = .0f
   private var isPressed: Boolean = false
 

@@ -1,12 +1,7 @@
-package gameover.fwk
+package gameover.fwk.logging
 
 import com.badlogic.gdx.Gdx
 
-/**
- *
- * @author olmartin@expedia.com
- * @since 2015-07-01
- */
 trait Logs {
 
   object LogType extends Enumeration {

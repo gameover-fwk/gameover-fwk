@@ -10,7 +10,7 @@ class Point(val x: Int, val y: Int, var g: Int, var h: Int, var ancestor: Option
     case None => 0
   }
 
-  def canEqual(a: Any) = a.isInstanceOf[Point]
+  def canEqual(a: Any) : Boolean = a.isInstanceOf[Point]
 
   override def equals(that: Any): Boolean =
     that match {

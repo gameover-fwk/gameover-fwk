@@ -4,9 +4,9 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.files.FileHandle
 import com.badlogic.gdx.graphics.g2d.{Animation, NinePatch, TextureRegion}
 import com.badlogic.gdx.graphics.{Pixmap, Texture}
-import gameover.fwk.Logs
 import gameover.fwk.libgdx.scene2d.Disposable
 import gameover.fwk.libgdx.utils.LibGDXHelper
+import gameover.fwk.logging.Logs
 
 import scala.collection.mutable
 
@@ -150,7 +150,7 @@ object GraphicsLoader extends Disposable with Logs with LibGDXHelper {
       val regions: Array[Array[TextureRegion]] = TextureRegion.split(texture, width, height)
       val animArray = new BadlogicGdxArray[TextureRegion](regions(0).length)
       for (i <- regions(0).indices) {
-        animArray.set(i, regions(0)(i))
+        animArray.add(regions(0)(i))
       }
       val animation: Animation = new Animation(frameDuration, animArray)
       if (playMode != null) {
@@ -166,7 +166,7 @@ object GraphicsLoader extends Disposable with Logs with LibGDXHelper {
       val regions = TextureRegion.split(texture, width, height)
       val animArray = new BadlogicGdxArray[TextureRegion](index.length)
       for (i <- index) {
-        animArray.set(i, regions(0)(i))
+        animArray.add(regions(0)(i))
       }
       val animation = new Animation(frameDuration, animArray)
       animation.setPlayMode(playMode)

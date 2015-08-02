@@ -28,7 +28,7 @@ abstract class BasicCollisionDetector extends CollisionDetector{
     }
   }
 
-  private def checkCollisions(intersections: Iterable[Vector2], onlyBlocking: Boolean): Boolean = {
+  private def checkCollisions(intersections: GdxArray[Vector2], onlyBlocking: Boolean): Boolean = {
     for (intersection <- intersections) {
       if (Math.floor(intersection.x) == intersection.x) {
         if (checkCollision(intersection.x, Math.floor(intersection.y).toFloat, onlyBlocking) ||

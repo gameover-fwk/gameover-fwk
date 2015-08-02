@@ -3,13 +3,14 @@ package gameover.fwk.ai.impl
 import com.badlogic.gdx.maps.tiled.{TiledMap, TiledMapTileLayer}
 import com.badlogic.gdx.maps.{MapLayer, MapLayers}
 import com.badlogic.gdx.math.{Intersector, Rectangle, Vector2}
+import gameover.fwk.ai.CollisionState
 import gameover.fwk.libgdx.collection.GdxArray
 import gameover.fwk.libgdx.gfx.GeometryUtils
 import gameover.fwk.pool.{RectanglePool, Vector2Pool}
 
 class MapCollisionDetector extends BasicCollisionDetector {
 
-  private val collisionTiles = new GdxArray[CollisionState]
+  private val collisionTiles = new GdxArray[CollisionSquare]
 
   private var width: Int = 0
   private var height: Int = 0
@@ -19,6 +20,39 @@ class MapCollisionDetector extends BasicCollisionDetector {
     for (cs <- collisionTiles)
       RectanglePool.free(cs.r)
     collisionTiles.clear()
+  }
+
+  val v:String = 0x2551.toChar.toString
+  val h:String = 0x2550.toChar.toString * 2
+  val tl:String = 0x2554.toChar.toString
+  val tr:String = 0x2557.toChar.toString
+  val bl:String = 0x255A.toChar.toString
+  val br:String = 0x255D.toChar.toString
+  val w:String =  0x2588.toChar.toString * 2
+  val g:String = 0x2591.toChar.toString * 2
+
+  override def toString : String = {
+    val minX: Float = collisionTiles.reduceLeft((first, second) => if (first.x < second.x) first else second).x
+    val maxX: Float = collisionTiles.reduceLeft((first, second) => if (first.x > second.x) first else second).x
+    val minY: Float = collisionTiles.reduceLeft((first, second) => if (first.y < second.y) first else second).y
+    val maxY: Float = collisionTiles.reduceLeft((first, second) => if (first.y > second.y) first else second).y
+    val stateByCoord = collisionTiles.toMap[(Float, Float), CollisionState.Value]((square: CollisionSquare) =>(square.xy, square.state))
+    val builder = new StringBuilder
+    builder.append(tl).append(h * (maxX - minX + 1).toInt).append(tr).append("\n")
+    for (y: Float <- maxY to minY by -1.0f) {
+      builder.append(v)
+      for (x: Float <- minX to maxX by 1.0f) {
+        val state = stateByCoord.getOrElse((x, y), CollisionState.Empty) match {
+          case CollisionState.Blocking => w
+          case CollisionState.Void => "  "
+          case _ => g
+        }
+        builder.append(state)
+      }
+      builder.append(v).append("\n")
+    }
+    builder.append(bl).append(h * (maxX - minX + 1).toInt).append(br)
+    builder.substring(0, builder.size)
   }
 
   def loadCollisionFromMap(map: TiledMap) {
@@ -38,7 +72,9 @@ class MapCollisionDetector extends BasicCollisionDetector {
     }
   }
 
-  def analyseLayer(mapLayer: MapLayer, state: CollisionState.Value) {
+  def addCollisionTile(collisionSquare: CollisionSquare) = collisionTiles.add(collisionSquare)
+
+  private def analyseLayer(mapLayer: MapLayer, state: CollisionState.Value) {
     mapLayer match {
       case layer: TiledMapTileLayer =>
         for (y <- 0 to layer.getHeight - 1) {
@@ -46,7 +82,7 @@ class MapCollisionDetector extends BasicCollisionDetector {
             val cell: TiledMapTileLayer.Cell = layer.getCell(x, y)
             if (cell != null) {
               val rect: Rectangle = RectanglePool.obtain(x, y, 1, 1)
-              collisionTiles.add(new CollisionState(rect, state))
+              addCollisionTile(new CollisionSquare(rect, state))
             }
           }
         }
@@ -127,9 +163,10 @@ class MapCollisionDetector extends BasicCollisionDetector {
   }
 }
 
-private class CollisionState (val r: Rectangle, val state: CollisionState.Value)
-
-object CollisionState extends Enumeration {
-  val Blocking, Void, Empty = Value
+case class CollisionSquare (r: Rectangle, state: CollisionState.Value) {
+  def xy: (Float, Float) = (r.x, r.y)
+  def x: Float = r.x
+  def y: Float = r.y
+  def width = r.width
+  def height = r.height
 }
-

@@ -4,45 +4,29 @@ import java.util.Comparator
 
 import com.badlogic.gdx.utils.{Array, Predicate}
 
-import scala.collection.generic.{GenericCompanion, GenericTraversableTemplate}
-import scala.collection.{LinearSeqOptimized, mutable}
+import scala.collection.immutable
 
-object GdxArray extends GenericCompanion[GdxArray] {
+object GdxArray {
 
   def apply[T](): GdxArray[T] = new GdxArray[T]()
-  def apply[T](nb: Int): GdxArray[T] = new GdxArray[T](new Array[T](nb))
+
+  def apply[T](elts: T*): GdxArray[T] = {
+    val array = new Array[T](elts.size)
+    elts.foreach(array.add)
+    new GdxArray[T](array)
+  }
+
   def fill[T](nb:Int)(elem: => T) : GdxArray[T] = {
     val array = new GdxArray[T]()
     for (i <- 0 to nb-1)
       array.add(elem)
     array
   }
-  def newBuilder[T]: mutable.Builder[T, GdxArray[T]] = new GdxArrayBuilder[T]
-}
-
-class GdxArrayBuilder[T] extends mutable.Builder[T, GdxArray[T]] {
-  var array: Array[T] = new Array[T]()
-  def result() = new GdxArray[T](array)
-
-  override def +=(elem: T): GdxArrayBuilder.this.type = {
-    array.add(elem)
-    this
-  }
-
-  override def clear() {
-    array = new Array[T]()
-  }
 }
 
 case class GdxArray[T](internalArray : Array[T] = new Array[T])
-  extends mutable.AbstractSeq[T]
-  with mutable.LinearSeq[T]
-  with Product
-  with GenericTraversableTemplate[T, GdxArray]
-  with LinearSeqOptimized[T, GdxArray[T]]
-  with Serializable {
-
-  override def companion: GenericCompanion[GdxArray] = GdxArray
+  extends Serializable
+  with java.lang.Cloneable {
 
   def asLibGDXArray() : Array[T] = internalArray
 
@@ -64,7 +48,7 @@ case class GdxArray[T](internalArray : Array[T] = new Array[T])
   def get(idx: Int) : T = internalArray.get(idx)
   def indexOf(value: T, identity: Boolean) : Int = internalArray.indexOf(value, identity)
   def insert(index: Int, value: T) { internalArray.insert(index, value) }
-//  def iterator() : java.util.Iterator[T] = internalArray.iterator()
+  def iterator() : java.util.Iterator[T] = internalArray.iterator()
   def lastIndexOf(value: T, identity: Boolean) : Int = internalArray.lastIndexOf(value, identity)
   def peek() : T = internalArray.peek()
   def pop() : T = internalArray.pop()
@@ -73,7 +57,7 @@ case class GdxArray[T](internalArray : Array[T] = new Array[T])
   def removeIndex(index: Int) : T = internalArray.removeIndex(index)
   def removeRange(start:Int, end: Int) { internalArray.removeRange(start, end) }
   def removeValue(value: T, identity: Boolean) : Boolean = internalArray.removeValue(value, identity)
-//  def reverse() { internalArray.reverse() }
+  def reverse() { internalArray.reverse() }
   def select(predicate: Predicate[T]) : java.lang.Iterable[T] = internalArray.select(predicate)
   def selectRanked(comparator: Comparator[T], kthLowest: Int) = internalArray.selectRanked(comparator, kthLowest)
   def selectRankedIndex(comparator: Comparator[T], kthLowest: Int) = internalArray.selectRankedIndex(comparator, kthLowest)
@@ -83,10 +67,15 @@ case class GdxArray[T](internalArray : Array[T] = new Array[T])
   def sort() { internalArray.sort() }
   def sort(comparator: Comparator[_ >: T]) { internalArray.sort(comparator) }
   def swap(first: Int, second: Int) { internalArray.swap(first, second) }
-  def toArray() = internalArray.toArray()
+  def toArray = internalArray.toArray
   def toArray(t: Class[_]) = internalArray.toArray(t)
   def toString(separator: String) = internalArray.toString(separator)
   def truncate(newSize: Int) = internalArray.truncate(newSize)
+  def indices: Iterable[Int] = Range.apply(0, length)
+  def head = if (size > 0) internalArray.first() else throw new NoSuchElementException("Array is empty")
+  def headOption = if (size > 0) Some(internalArray.first()) else None
+  def last = internalArray.get(size - 1)
+  def lastIndex = size - 1
 
   def map[R]( f : T => R ) : GdxArray[R] = {
     val newArray = new GdxArray[R]()
@@ -98,8 +87,6 @@ case class GdxArray[T](internalArray : Array[T] = new Array[T])
     newArray
   }
 
-  override def toString(): String = s"[${mkString(", ")}]"
-
   def flatMap[R](f: T => GdxArray[R]): GdxArray[R] = {
     val newArray = new GdxArray[R]()
     for (i <- indices) {
@@ -109,7 +96,7 @@ case class GdxArray[T](internalArray : Array[T] = new Array[T])
     newArray
   }
 
-  override def filter(f: T => Boolean): GdxArray[T] = {
+  def filter(f: T => Boolean): GdxArray[T] = {
     val newArray = new GdxArray[T]()
     val array: Array[T] = newArray.internalArray
     for (i <- indices) {
@@ -121,18 +108,21 @@ case class GdxArray[T](internalArray : Array[T] = new Array[T])
     newArray
   }
 
-  override def foreach[U] (f: T => U) {
+  def foreach[U] (f: T => U) {
     for (i <- indices) {
       val value: T = get (i)
       f (value)
     }
   }
 
-  override def update(idx: Int, elem: T) {
-    set(idx, elem)
-  }
+//  override def update(idx: Int, elem: T) {
+//    set(idx, elem)
+//  }
 
-  override def length: Int = super.size
+  def length: Int = internalArray.size
+  def size: Int = internalArray.size
+  def isEmpty: Boolean = internalArray.size == 0
+  def nonEmpty: Boolean =  internalArray.size != 0
 
   def +(value: T) : GdxArray[T] = {
     val newArray = copy
@@ -177,16 +167,48 @@ case class GdxArray[T](internalArray : Array[T] = new Array[T])
     this
   }
 
-  def copy : GdxArray[T] = {
-    val copy = GdxArray[T]()
-    for (i <- indices)
-      copy + get(i)
-    copy
-  }
+  def copy : GdxArray[T] = GdxArray[T](internalArray)
 
-  def dropHead : GdxArray[T] = {
+  def tail : GdxArray[T] = {
+    if (size == 0)
+      throw new NoSuchElementException("Array is empty")
     val c = copy
     c.removeIndex(0)
     c
+  }
+
+  def reduceLeft(f: (T, T) => T) : T = {
+    if (size == 0)
+      throw new NoSuchElementException("Array is empty")
+    else if (size == 1)
+      head
+    else {
+      var res = head
+      for (i <- 1 to size - 1) {
+        res = f(res, get(i))
+      }
+      res
+    }
+  }
+
+  def reduceRight(f: (T, T) => T) : T = {
+    if (size == 0)
+      throw new NoSuchElementException("Array is empty")
+    else if (size == 1)
+      head
+    else {
+      var res = last
+      for (i <- size - 2 to 0 by -1) {
+        res = f(res, get(i))
+      }
+      res
+    }
+  }
+
+  def toMap[A, B](f: T => (A, B)): immutable.Map[A, B] = {
+    val b = immutable.Map.newBuilder[A, B]
+    for (i <- indices)
+      b += f(get(i))
+    b.result()
   }
 }

@@ -58,10 +58,8 @@ object Polygons {
       ret = Vector2Pool.obtainAsGdxArray(segments + 1)
     }
     else {
-      ret = GdxArray[Vector2](segments + 1)
-      for (i <- 0 to segments) {
-        ret.add(new Vector2)
-      }
+      def f = new Vector2
+      ret = GdxArray.fill[Vector2](segments + 1)(f)
     }
     for (i <- 0 to segments) {
       val temp: Float = cx

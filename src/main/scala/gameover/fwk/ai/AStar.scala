@@ -48,21 +48,23 @@ class AStar(hComputeStrategy: HComputeStrategy) extends LibGDXHelper {
     if (findNearestPoint && nearest != null) {
       computeFinalPath(ix, iy, nearest)
     } else {
-      null
+      GdxArray[GridPoint2]()
     }
   }
 
   def findSmoothPath(area: Rectangle, tx: Float, ty: Float, findNearestPoint: Boolean, collisionDetector: CollisionDetector): GdxArray[Vector2] = {
     val center = area.getCenter(Vector2Pool.obtain())
     val path: GdxArray[GridPoint2] = findPath(center.x, center.y, tx, ty, findNearestPoint, collisionDetector)
-    val smoothPath: GdxArray[Vector2] = new GdxArray[Vector2]
-    computePointForSmoothPathAuxRecursively(area, path, 0, MathUtils.floor(center.x), MathUtils.floor(center.y), smoothPath)
-    if (path.size > 0) {
-      val last: GridPoint2 = path.get(path.size - 1)
-      if (MathUtils.floor(tx) == last.x && MathUtils.floor(ty) == last.y) smoothPath.add(Vector2Pool.obtain(tx, ty))
-    }
-    Vector2Pool.free(center)
-    smoothPath
+    if (path != null) {
+      val smoothPath: GdxArray[Vector2] = new GdxArray[Vector2]
+      computePointForSmoothPathAuxRecursively(area, path, 0, MathUtils.floor(center.x), MathUtils.floor(center.y), smoothPath)
+      if (path.nonEmpty) {
+        val last: GridPoint2 = path.last
+        if (MathUtils.floor(tx) == last.x && MathUtils.floor(ty) == last.y) smoothPath.add(Vector2Pool.obtain(tx, ty))
+      }
+      Vector2Pool.free(center)
+      smoothPath
+    } else null
   }
 
   private def computePointForSmoothPathAuxRecursively(
@@ -72,7 +74,7 @@ class AStar(hComputeStrategy: HComputeStrategy) extends LibGDXHelper {
                                                        previousTileX: Int,
                                                        previousTileY: Int,
                                                        smoothPath: GdxArray[Vector2]) {
-    if (i < path.size - 1) {
+    if (i < path.lastIndex) {
       val tile: GridPoint2 = path.get(i)
       val nextTile: GridPoint2 = path.get(i + 1)
       val fromDiag: Boolean = tile.x != previousTileX && tile.y != previousTileY

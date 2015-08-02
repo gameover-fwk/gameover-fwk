@@ -16,8 +16,10 @@ group = 'gameover.fwk'
 version = '0.2.0-SNAPSHOT'
 
 ext {
-  gdxVersion = '1.5.4'
-  scalaVersion = '2.11.5'
+    gdxVersion = '1.5.4'
+    scalaVersion = '2.11.5'
+    scalaLangVersion = scalaVersion.substring(0, scalaVersion.lastIndexOf('.'))
+    scalaTestVersion = '2.2.4'
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_6
@@ -26,6 +28,7 @@ targetCompatibility = JavaVersion.VERSION_1_6
 dependencies {
     compile "com.badlogicgames.gdx:gdx:$gdxVersion"
     compile "org.scala-lang:scala-library:$scalaVersion"
+    testCompile "org.scalatest:scalatest_$scalaLangVersion:$scalaTestVersion"
 }
 
 compileScala {
@@ -33,9 +36,6 @@ compileScala {
 
     // optionally specify host and port of the daemon:
     scalaCompileOptions.daemonServer = "localhost:4243"
-}
-
-tasks.withType(ScalaCompile) {
     scalaCompileOptions.useAnt = false
 }
 
