@@ -15,18 +15,21 @@ abstract class BasicCollisionDetector extends CollisionDetector{
     Vector2Pool.free(center)
     val isGoingTop: Boolean = Math.signum(targetY - y) >= 0f
     val isGoingRight: Boolean = Math.signum(targetX - x) >= 0f
-    val diffX1: Float = if (isGoingRight) area.width + area.x else area.x
-    val diffY1: Float = if (isGoingTop) area.y else area.height + area.y
-    val intersectionPoints: GdxArray[Vector2] = GeometryUtils.computeTiledIntersectionPoints(x + diffX1, y + diffY1, targetX + diffX1, targetY + diffY1)
-    val diffX2: Float = if (isGoingRight) area.x else area.width + area.x
-    val diffY2: Float = if (isGoingTop) area.height + area.y else area.y
-    intersectionPoints.addAll(GeometryUtils.computeTiledIntersectionPoints(x + diffX2, y + diffY2, targetX + diffX2, targetY + diffY2))
+    val halfWidth = area.width / 2
+    val halfHeight = area.height / 2
+    val diffX1: Float = if (isGoingRight) -1  else 1
+    val diffY1: Float = if (isGoingTop) 1 else -1
+    val intersectionPoints: GdxArray[Vector2] = GeometryUtils.computeTiledIntersectionPoints(x + diffX1 * halfWidth, y + diffY1 * halfHeight, targetX + diffX1 * halfWidth, targetY + diffY1 * halfHeight)
+    val diffX2: Float = if (isGoingRight) 1 else 1
+    val diffY2: Float = if (isGoingTop) -1 else 1
+    intersectionPoints.addAll(GeometryUtils.computeTiledIntersectionPoints(x + diffX2 * halfWidth, y + diffY2 * halfHeight, targetX + diffX2 * halfWidth, targetY + diffY2 * halfHeight))
     try {
       !checkCollisions(intersectionPoints, onlyBlocking)
     } finally {
       Vector2Pool.free(intersectionPoints)
     }
   }
+
 
   private def checkCollisions(intersections: GdxArray[Vector2], onlyBlocking: Boolean): Boolean = {
     for (intersection <- intersections) {

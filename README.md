@@ -32,6 +32,5 @@ Authors and contributors are listed in file [contributors.txt](contributors.txt)
 Feel free to submit your Pull Request!
 
 ## TODO ##
-* fix collision detector is direct
 * fix path finding
 * add some test for A*

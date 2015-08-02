@@ -23,21 +23,21 @@ class MapCollisionDetectorTest extends FlatSpec{
   case class TestData(area: Rectangle, pointX: Float, pointY: Float, result: Boolean)
   val testData = List[TestData](
     //-- simple cases
-//    TestData(new Rectangle(0.5f, 0.5f, 0.5f, 0.5f), 4.5f, 0.5f, result = true),
-//    TestData(new Rectangle(4.5f, 0.5f, 0.5f, 0.5f), 0.5f, 0.5f, result = true),
-//    TestData(new Rectangle(0.5f, 0.5f, 0.5f, 0.5f), 0.5f, 4.5f, result = true),
-//    TestData(new Rectangle(0.5f, 4.5f, 0.5f, 0.5f), 0.5f, 0.5f, result = true),
-//    TestData(new Rectangle(0.5f, 0.5f, 0.5f, 0.5f), 1.5f, 1.5f, result = true),
+    TestData(new Rectangle(0.5f, 0.5f, 0.5f, 0.5f), 4.5f, 0.5f, result = true),
+    TestData(new Rectangle(4.5f, 0.5f, 0.5f, 0.5f), 0.5f, 0.5f, result = true),
+    TestData(new Rectangle(0.5f, 0.5f, 0.5f, 0.5f), 0.5f, 4.5f, result = true),
+    TestData(new Rectangle(0.5f, 4.5f, 0.5f, 0.5f), 0.5f, 0.5f, result = true),
+    TestData(new Rectangle(0.5f, 0.5f, 0.5f, 0.5f), 1.5f, 1.5f, result = true),
     TestData(new Rectangle(1.5f, 1.5f, 0.5f, 0.5f), 0.5f, 0.5f, result = true),
     TestData(new Rectangle(0.5f, 1.5f, 0.5f, 0.5f), 1.5f, 0.5f, result = true),
     TestData(new Rectangle(1.5f, 0.5f, 0.5f, 0.5f), 0.5f, 1.5f, result = true),
     //-- through void
-//    TestData(new Rectangle(0.5f, 4.5f, 0.5f, 0.5f), 4.5f, 4.5f, result = true),
-//    TestData(new Rectangle(4.5f, 4.5f, 0.5f, 0.5f), 0.5f, 4.5f, result = true),
+    TestData(new Rectangle(0.5f, 4.5f, 0.5f, 0.5f), 4.5f, 4.5f, result = true),
+    TestData(new Rectangle(4.5f, 4.5f, 0.5f, 0.5f), 0.5f, 4.5f, result = true),
     //-- block by wall
     TestData(new Rectangle(0.5f, 2.5f, 0.5f, 0.5f), 4.5f, 2.5f, result = false),
     TestData(new Rectangle(4.5f, 2.5f, 0.5f, 0.5f), 0.5f, 2.5f, result = false),
-//    TestData(new Rectangle(0.5f, 0.5f, 0.5f, 0.5f), 4.5f, 4.5f, result = false),
+    TestData(new Rectangle(0.5f, 0.5f, 0.5f, 0.5f), 4.5f, 4.5f, result = false),
     TestData(new Rectangle(2.5f, 2.5f, 0.5f, 0.5f), 3.5f, 3.5f, result = false)
   )
 
