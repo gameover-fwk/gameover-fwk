@@ -49,7 +49,7 @@ class GdxArrayTest extends FlatSpec {
     assert(array.isEmpty)
   }
 
-  "A GDX array containing one element" should "return an empty array" in {
+  "A GDX array containing one element" should "return an empty array when tail is invoked" in {
     val array = GdxArray[Int](123)
     assert(array.size == 1)
     assert(array.tail.isEmpty)

@@ -38,9 +38,7 @@ class MapCollisionDetector extends BasicCollisionDetector {
     val maxY: Float = collisionTiles.reduceLeft((first, second) => if (first.y > second.y) first else second).y
     val stateByCoord = collisionTiles.toMap[(Float, Float), CollisionState.Value]((square: CollisionSquare) =>(square.xy, square.state))
     val builder = new StringBuilder
-    builder.append(tl).append(h * (maxX - minX + 1).toInt).append(tr).append("\n")
     for (y: Float <- maxY to minY by -1.0f) {
-      builder.append(v)
       for (x: Float <- minX to maxX by 1.0f) {
         val state = stateByCoord.getOrElse((x, y), CollisionState.Empty) match {
           case CollisionState.Blocking => w
@@ -49,9 +47,8 @@ class MapCollisionDetector extends BasicCollisionDetector {
         }
         builder.append(state)
       }
-      builder.append(v).append("\n")
+      builder.append("\n")
     }
-    builder.append(bl).append(h * (maxX - minX + 1).toInt).append(br)
     builder.substring(0, builder.size)
   }
 
@@ -107,10 +104,9 @@ class MapCollisionDetector extends BasicCollisionDetector {
   }
 
   override def checkPosition(x: Float, y: Float) : CollisionState.Value = {
-    val tileX = x.ceil.toInt
-    val tileY = y.ceil.toInt
-    for (i <- collisionTiles.indices) {
-      val cs = collisionTiles.get(i)
+    val tileX = x.floor.toInt
+    val tileY = y.floor.toInt
+    for (cs <- collisionTiles) {
       if (cs.r.x.toInt == tileX && cs.r.y.toInt == tileY)
         return cs.state
     }

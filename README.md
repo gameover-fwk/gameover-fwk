@@ -6,12 +6,12 @@ The code is available on [Github](https://github.com/PixelDuck/gameover-game-fra
 ## Build framework and deploy on local repository ##
 To build the framework, just run gradle task:
 ```
-gradle clean build
+gradlew clean build
 ```
 
 to publish on a local Maven repository, run:
 ```
-gradle publishToMavenLocal
+gradlew publishToMavenLocal
 ```
 
 ## Features

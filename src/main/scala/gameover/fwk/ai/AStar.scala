@@ -9,8 +9,8 @@ import gameover.fwk.pool.{GridPoint2Pool, Vector2Pool}
 import scala.math.Ordering
 
 class AStar(hComputeStrategy: HComputeStrategy) extends LibGDXHelper {
-  private var opened: List[Point] = Nil
-  private var closed: List[Point] = Nil
+  private val opened: GdxArray[Point] = new GdxArray()
+  private val closed: GdxArray[Point] = new GdxArray()
   private var nearest: Point = null
 
   /**
@@ -23,11 +23,11 @@ class AStar(hComputeStrategy: HComputeStrategy) extends LibGDXHelper {
    * @param y the initial position on y axis
    * @param tx the target position on x axis
    * @param ty the target position on y axis
-   * @param findNearestPoint return the nearest point if target is not reachable
+   * @param findClosestPoint return the nearest point if target is not reachable
    * @param collisionDetector the collision detector to use
-   * @return an array of tiles indices to reach path
+   * @return an array of tiles indices to reach path. Returns <code>null</code> if node path is found.
    */
-  def findPath(x: Float, y: Float, tx: Float, ty: Float, findNearestPoint: Boolean, collisionDetector: CollisionDetector): GdxArray[GridPoint2] = {
+  def findPath(x: Float, y: Float, tx: Float, ty: Float, findClosestPoint: Boolean, collisionDetector: CollisionDetector): GdxArray[GridPoint2] = {
     val ret: GdxArray[GridPoint2] = new GdxArray[GridPoint2]
     val ix: Int = MathUtils.floor(x)
     val iy: Int = MathUtils.floor(y)
@@ -36,8 +36,6 @@ class AStar(hComputeStrategy: HComputeStrategy) extends LibGDXHelper {
     if (ix == itx && iy == ity) {
       return ret
     }
-    opened = Nil
-    closed = Nil
     var p: Option[Point] = addToOpenedIfElligible(ix, iy, ix, iy, itx, ity, collisionDetector, None, hComputeStrategy)
     if (p.isDefined) {
       p = processPath(itx, ity, collisionDetector, p.get, hComputeStrategy)
@@ -45,21 +43,21 @@ class AStar(hComputeStrategy: HComputeStrategy) extends LibGDXHelper {
         return computeFinalPath(ix, iy, p.get)
       }
     }
-    if (findNearestPoint && nearest != null) {
+    if (findClosestPoint && nearest != null) {
       computeFinalPath(ix, iy, nearest)
     } else {
-      GdxArray[GridPoint2]()
+      null
     }
   }
 
-  def findSmoothPath(area: Rectangle, tx: Float, ty: Float, findNearestPoint: Boolean, collisionDetector: CollisionDetector): GdxArray[Vector2] = {
+  def findSmoothPath(area: Rectangle, tx: Float, ty: Float, findClosestPoint: Boolean, collisionDetector: CollisionDetector): GdxArray[Vector2] = {
     val center = area.getCenter(Vector2Pool.obtain())
-    val path: GdxArray[GridPoint2] = findPath(center.x, center.y, tx, ty, findNearestPoint, collisionDetector)
+    val path: GdxArray[GridPoint2] = findPath(center.x, center.y, tx, ty, findClosestPoint, collisionDetector)
     if (path != null) {
       val smoothPath: GdxArray[Vector2] = new GdxArray[Vector2]
       computePointForSmoothPathAuxRecursively(area, path, 0, MathUtils.floor(center.x), MathUtils.floor(center.y), smoothPath)
       if (path.nonEmpty) {
-        val last: GridPoint2 = path.last
+        val last: GridPoint2 = path.peekLast()
         if (MathUtils.floor(tx) == last.x && MathUtils.floor(ty) == last.y) smoothPath.add(Vector2Pool.obtain(tx, ty))
       }
       Vector2Pool.free(center)
@@ -144,7 +142,7 @@ class AStar(hComputeStrategy: HComputeStrategy) extends LibGDXHelper {
       point = point.ancestor.orNull
     }
     ret.insert(0, GridPoint2Pool.obtain(ix, iy))
-    for (i <- ret.size-2 to 0 by -1) {
+    for (i <- ret.size-2 to 1 by -1) {
       val p: GridPoint2 = ret.get(i)
       val prevP: GridPoint2 = ret.get(i - 1)
       val nextP: GridPoint2 = ret.get(i + 1)
@@ -160,20 +158,6 @@ class AStar(hComputeStrategy: HComputeStrategy) extends LibGDXHelper {
     ret
   }
 
-  def contains(x: Int, y: Int, points: List[Point]): Boolean = {
-    for (p <- points) {
-      if (p.is(x, y)) return true
-    }
-    false
-  }
-
-  def find(x: Int, y: Int, points: List[Point]): Option[Point] = {
-    for (p <- points) {
-      if (p.is(x, y)) return Some(p)
-    }
-    None
-  }
-
   private def processPath(tx: Int, ty: Int, collisionDetector: CollisionDetector, ancestor: Point, hComputeStrategy: HComputeStrategy): Option[Point] = {
     val x: Int = ancestor.x
     val y: Int = ancestor.y
@@ -185,8 +169,8 @@ class AStar(hComputeStrategy: HComputeStrategy) extends LibGDXHelper {
     if (ancestor.is(tx, ty)) {
       a
     } else {
-      opened = opened.filter(_ != ancestor)
-      closed = ancestor :: closed
+      opened.drop(_ == ancestor)
+      closed ::= ancestor
       if (opened.nonEmpty) {
         val lowest = opened.min(Ordering.by((p: Point)=>p.f))
         processPath(tx, ty, collisionDetector, lowest, hComputeStrategy)
@@ -199,10 +183,10 @@ class AStar(hComputeStrategy: HComputeStrategy) extends LibGDXHelper {
   private def addToOpenedIfElligible(x: Int, y: Int, previousX: Int, previousY: Int, targetX: Int, targetY: Int,
                                          collisionDetector: CollisionDetector, ancestor: Option[Point], hComputeStrategy: HComputeStrategy): Option[Point] = {
     var p: Point = null
-    if (find(x, y, closed) == null) {
+    if (!closed.exists(_.is(x, y))) {
       try {
         if (!collisionDetector.checkCollision(x, y, onlyBlocking = false)) {
-          val found: Option[Point] = find(x, y, opened)
+          val found: Option[Point] = opened.find(_.is(x, y))
           var g: Int = 0
           if (ancestor.isDefined) {
             g = if ((ancestor.get.x == x) || (ancestor.get.y == y)) 10 else 14
@@ -218,7 +202,7 @@ class AStar(hComputeStrategy: HComputeStrategy) extends LibGDXHelper {
           }
           else {
             p = new Point(x, y, g, h, ancestor)
-            opened = p :: opened
+            opened ::= p
           }
           if (nearest == null || h < nearest.h || (h == nearest.h && g + h < nearest.f)) {
             nearest = p

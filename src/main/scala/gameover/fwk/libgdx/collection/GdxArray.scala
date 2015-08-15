@@ -6,6 +6,11 @@ import com.badlogic.gdx.utils.{Array, Predicate}
 
 import scala.collection.immutable
 
+/**
+ * GdxArray is a scala wrapper to GdxArray from libgdx. Notice that the collection is mutable for performance reason.
+ *
+ * @author pixelduck.game@gmail.com
+ */
 object GdxArray {
 
   def apply[T](): GdxArray[T] = new GdxArray[T]()
@@ -50,8 +55,14 @@ case class GdxArray[T](internalArray : Array[T] = new Array[T])
   def insert(index: Int, value: T) { internalArray.insert(index, value) }
   def iterator() : java.util.Iterator[T] = internalArray.iterator()
   def lastIndexOf(value: T, identity: Boolean) : Int = internalArray.lastIndexOf(value, identity)
-  def peek() : T = internalArray.peek()
-  def pop() : T = internalArray.pop()
+  def peek() : T = if (size > 0) internalArray.peek() else throw new NoSuchElementException("Array is empty")
+  def peekLast() : T = peek()
+  def pop() : T = if (size > 0) internalArray.pop() else throw new NoSuchElementException("Array is empty")
+  def popLast() : T = pop()
+  def peekFirst(): T = head
+  def peekFirstOption(): Option[T] = headOption
+  def popFirst() : T = if (size > 0) internalArray.removeIndex(0) else throw new NoSuchElementException("Array is empty")
+  def popFirstOption(): Option[T] = if (size > 0) Some(popFirst()) else None
   def random() : T = internalArray.random()
   def removeAll(array: GdxArray[_ <: T], identity: Boolean) : Boolean = if (array != null) internalArray.removeAll(array.asLibGDXArray(), identity) else false
   def removeIndex(index: Int) : T = internalArray.removeIndex(index)
@@ -72,9 +83,17 @@ case class GdxArray[T](internalArray : Array[T] = new Array[T])
   def toString(separator: String) = internalArray.toString(separator)
   def truncate(newSize: Int) = internalArray.truncate(newSize)
   def indices: Iterable[Int] = Range.apply(0, length)
-  def head = if (size > 0) internalArray.first() else throw new NoSuchElementException("Array is empty")
-  def headOption = if (size > 0) Some(internalArray.first()) else None
-  def last = internalArray.get(size - 1)
+  def head: T = if (size > 0) internalArray.get(0) else throw new NoSuchElementException("Array is empty")
+  def headOption: Option[T] = if (size > 0) Some(head) else None
+  def last: T = if (size > 0) internalArray.get(lastIndex) else throw new NoSuchElementException("Array is empty")
+  def lastOption: Option[T] = if (size > 0) Some(last) else None
+  def tail: GdxArray[T] = drop(1)
+  def drop(nb: Int): GdxArray[T] = {
+    if (nb <= size) {
+      internalArray.removeRange(0, nb - 1)
+      this
+    } else throw new NoSuchElementException(s"Array do not contains $nb elements")
+  }
   def lastIndex = size - 1
 
   def map[R]( f : T => R ) : GdxArray[R] = {
@@ -96,6 +115,15 @@ case class GdxArray[T](internalArray : Array[T] = new Array[T])
     newArray
   }
 
+  def drop(f: T => Boolean) {
+    for (i <- size-1 to 0 by -1) {
+      val value: T = get(i)
+      if (f(value)) {
+        internalArray.removeIndex(i)
+      }
+    }
+  }
+
   def filter(f: T => Boolean): GdxArray[T] = {
     val newArray = new GdxArray[T]()
     val array: Array[T] = newArray.internalArray
@@ -115,9 +143,38 @@ case class GdxArray[T](internalArray : Array[T] = new Array[T])
     }
   }
 
-//  override def update(idx: Int, elem: T) {
-//    set(idx, elem)
-//  }
+  def update(idx: Int, elem: T) {
+    set(idx, elem)
+  }
+
+  def min[B >: T](implicit cmp: Ordering[B]): T = {
+    if (isEmpty)
+      throw new UnsupportedOperationException("empty.min")
+
+    reduceLeft((x, y) => if (cmp.lteq(x, y)) x else y)
+  }
+
+  def max[B >: T](implicit cmp: Ordering[B]): T = {
+    if (isEmpty)
+      throw new UnsupportedOperationException("empty.max")
+
+    reduceLeft((x, y) => if (cmp.gteq(x, y)) x else y)
+  }
+
+  def find(p: (T) => Boolean): Option[T] = {
+    if (isEmpty)
+      None
+    else {
+      for (i <- indices) {
+        val elt: T = get(i)
+        if (p(elt))
+          return Some(elt)
+      }
+      None
+    }
+  }
+
+  def exists(p: (T) => Boolean): Boolean = find(p).isDefined
 
   def length: Int = internalArray.size
   def size: Int = internalArray.size
@@ -125,65 +182,50 @@ case class GdxArray[T](internalArray : Array[T] = new Array[T])
   def nonEmpty: Boolean =  internalArray.size != 0
 
   def +(value: T) : GdxArray[T] = {
-    val newArray = copy
-    newArray += value
+    this += value
+    this
   }
 
-  def +=(value: T) : GdxArray[T] = {
+  def +=(value: T) {
     add(value)
-    this
   }
 
   def ++(value: GdxArray[T]) : GdxArray[T] = {
-    val newArray = copy
-    newArray.addAll(value)
-    newArray
+    this ++= value
+    this
   }
 
-  def ++=(value: GdxArray[T]) : GdxArray[T] = {
+  def ++=(value: GdxArray[T]) {
     addAll(value)
-    this
   }
 
   def ::(value: T) : GdxArray[T] = {
-    val newArray = copy
-    newArray.insert(0, value)
-    newArray
+    this ::= value
+    this
   }
 
-  def ::=(value: T) : GdxArray[T] = {
+  def ::=(value: T) {
     insert(0, value)
-    this
   }
 
   def -(value: T) : GdxArray[T] = {
-    val newArray = copy
-    newArray.removeValue(value, identity = true)
-    newArray
-  }
-
-  def -=(value: T) : GdxArray[T] = {
-    removeValue(value, identity = true)
+    this -= value
     this
   }
 
-  def copy : GdxArray[T] = GdxArray[T](internalArray)
-
-  def tail : GdxArray[T] = {
-    if (size == 0)
-      throw new NoSuchElementException("Array is empty")
-    val c = copy
-    c.removeIndex(0)
-    c
+  def -=(value: T) {
+    removeValue(value, identity = true)
   }
+
+  def copy : GdxArray[T] = GdxArray[T](internalArray)
 
   def reduceLeft(f: (T, T) => T) : T = {
     if (size == 0)
       throw new NoSuchElementException("Array is empty")
     else if (size == 1)
-      head
+      peekFirst()
     else {
-      var res = head
+      var res = peekFirst()
       for (i <- 1 to size - 1) {
         res = f(res, get(i))
       }
@@ -195,9 +237,9 @@ case class GdxArray[T](internalArray : Array[T] = new Array[T])
     if (size == 0)
       throw new NoSuchElementException("Array is empty")
     else if (size == 1)
-      head
+      peekLast()
     else {
-      var res = last
+      var res = peekLast()
       for (i <- size - 2 to 0 by -1) {
         res = f(res, get(i))
       }
