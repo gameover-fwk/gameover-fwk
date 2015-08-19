@@ -29,6 +29,8 @@ trait MapForTest {
       ret.addCollisionTile(new CollisionSquare(new Rectangle(blockingCell._1, blockingCell._2, 1f, 1f), CollisionState.Blocking))
     for (voidCell <- voidCells)
       ret.addCollisionTile(new CollisionSquare(new Rectangle(voidCell._1, voidCell._2, 1f, 1f), CollisionState.Void))
+    ret.width = 6
+    ret.height = 6
     ret
   }
 }

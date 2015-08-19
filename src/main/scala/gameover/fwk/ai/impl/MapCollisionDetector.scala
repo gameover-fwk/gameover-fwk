@@ -12,8 +12,8 @@ class MapCollisionDetector extends BasicCollisionDetector {
 
   private val collisionTiles = new GdxArray[CollisionSquare]
 
-  private var width: Int = 0
-  private var height: Int = 0
+  var width: Int = 0
+  var height: Int = 0
 
 
   def clear() {
@@ -106,11 +106,13 @@ class MapCollisionDetector extends BasicCollisionDetector {
   override def checkPosition(x: Float, y: Float) : CollisionState.Value = {
     val tileX = x.floor.toInt
     val tileY = y.floor.toInt
-    for (cs <- collisionTiles) {
-      if (cs.r.x.toInt == tileX && cs.r.y.toInt == tileY)
-        return cs.state
-    }
-    CollisionState.Empty
+    if (tileX >= 0 && tileY >= 0 && tileX < width && tileY < height) {
+      for (cs <- collisionTiles) {
+        if (cs.r.x.toInt == tileX && cs.r.y.toInt == tileY)
+          return cs.state
+      }
+      CollisionState.Empty
+    } else CollisionState.Blocking
   }
 
   override def checkCollision(area: Rectangle, movingSpriteVelocity: Vector2, onlyBlocking: Boolean): GdxArray[Rectangle] = {

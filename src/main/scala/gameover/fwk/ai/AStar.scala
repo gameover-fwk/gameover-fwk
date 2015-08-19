@@ -126,13 +126,13 @@ class AStar(hComputeStrategy: HComputeStrategy) extends LibGDXHelper {
     }
   }
 
-  private def createBottomLeftPoint(area: Rectangle, tile: GridPoint2): Vector2 = Vector2Pool.obtain(tile.x.toFloat - area.x, tile.y.toFloat - area.y)
+  private def createBottomLeftPoint(area: Rectangle, tile: GridPoint2): Vector2 = Vector2Pool.obtain(tile.x.toFloat + area.width/2, tile.y.toFloat + area.height/2)
 
-  private def createBottomRightPoint(area: Rectangle, tile: GridPoint2): Vector2 = Vector2Pool.obtain(tile.x.toFloat + 1f - (area.width + area.x), tile.y.toFloat - area.y)
+  private def createBottomRightPoint(area: Rectangle, tile: GridPoint2): Vector2 = Vector2Pool.obtain(tile.x.toFloat + 1f - area.width/2, tile.y.toFloat + area.height/2)
 
-  private def createTopLeftPoint(area: Rectangle, tile: GridPoint2): Vector2 = Vector2Pool.obtain(tile.x.toFloat - area.x, tile.y.toFloat + 1f - (area.height + area.y))
+  private def createTopLeftPoint(area: Rectangle, tile: GridPoint2): Vector2 = Vector2Pool.obtain(tile.x.toFloat + area.width/2, tile.y.toFloat + 1f - area.height/2)
 
-  private def createTopRightPoint(area: Rectangle, tile: GridPoint2): Vector2 = Vector2Pool.obtain(tile.x.toFloat + 1f - (area.width + area.x), tile.y.toFloat + 1f - (area.height + area.y))
+  private def createTopRightPoint(area: Rectangle, tile: GridPoint2): Vector2 = Vector2Pool.obtain(tile.x.toFloat + 1f - area.width/2, tile.y.toFloat + 1f - area.height/2)
 
   private def computeFinalPath(ix: Int, iy: Int, p: Point): GdxArray[GridPoint2] = {
     var point: Point = p

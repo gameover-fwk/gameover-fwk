@@ -8,5 +8,5 @@ import com.badlogic.gdx.math.Rectangle
  * @since 2015-08-15
  */
 trait SpriteForTest {
-  val sprite = new Rectangle(0.5f, 0.5f, 0.5f, 0.5f)
+  val sprite = new Rectangle(0.5f, 0.5f, 0.2f, 0.2f)
 }

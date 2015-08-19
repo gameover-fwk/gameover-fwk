@@ -1,7 +1,7 @@
 package gameover.fwk.ai.impl
 
-import com.badlogic.gdx.math.{Vector2, GridPoint2}
-import gameover.fwk.ai.AStar
+import com.badlogic.gdx.math.{GridPoint2, Vector2}
+import gameover.fwk.ai.{AStar, CollisionState}
 import gameover.fwk.libgdx.collection.GdxArray
 import org.scalatest._
 
@@ -66,6 +66,11 @@ class AStarTest extends FlatSpec with MapForTest with SpriteForTest with GivenWh
     assert(path.size > 1)
     val lastPoint: GridPoint2 = path.last
     assert(lastPoint === new GridPoint2(5, 4))
+    And("all points from path are on valid tile")
+    for (p <- path) {
+      info(s"Check if (${p.x}, ${p.y}) is valid")
+      assert(collisionDetector.checkPosition(p.x, p.y) === CollisionState.Empty)
+    }
   }
 
   "Calling A* with smooth pathfinding" must "return a smooth path to the point if point is reachable" in {
@@ -83,5 +88,10 @@ class AStarTest extends FlatSpec with MapForTest with SpriteForTest with GivenWh
     assert(path.size > 1)
     val lastPoint: Vector2 = path.last
     assert(lastPoint === new Vector2(5.5f, 4.5f))
+    And("all points from path are on valid tile")
+    for (p <- path) {
+      info(s"Check if (${p.x}, ${p.y}) is valid")
+      assert(collisionDetector.checkPosition(p.x, p.y) === CollisionState.Empty)
+    }
   }
 }

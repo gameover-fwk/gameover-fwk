@@ -143,6 +143,15 @@ case class GdxArray[T](internalArray : Array[T] = new Array[T])
     }
   }
 
+  def forall(p: (T) ⇒ Boolean): Boolean = {
+    for (i <- indices) {
+      val value: T = get (i)
+      if (!p(value))
+        return false
+    }
+    true
+  }
+
   def update(idx: Int, elem: T) {
     set(idx, elem)
   }

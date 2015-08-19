@@ -22,7 +22,3 @@ The framework is based on The [MIT License (MIT)](https://en.wikipedia.org/wiki/
 The framework was created by [Olivier MARTIN](http://gameover.co.in) <pixelduck.game@gmail.com>.
 Authors and contributors are listed in file [contributors.txt](contributors.txt) in the root of the project.
 Feel free to submit your Pull Request!
-
-## TODO ##
-* fix path finding
-* add some test for A*

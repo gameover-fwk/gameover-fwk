@@ -1,3 +1,5 @@
+import java.util.regex.Matcher
+
 buildscript {
     repositories {
         mavenCentral()
@@ -8,9 +10,15 @@ buildscript {
     }
 }
 
+plugins {
+    id "com.github.maiflai.scalatest" version "0.9"
+    id 'net.researchgate.release' version '2.2.1'
+}
+
 apply plugin: 'scala'
 apply plugin: 'idea'
 apply plugin: 'maven-publish'
+apply plugin: "com.github.maiflai.scalatest"
 
 group = 'gameover.fwk'
 version = '0.2.0-SNAPSHOT'
@@ -22,25 +30,34 @@ ext {
     scalaTestVersion = '2.2.4'
 }
 
-sourceCompatibility = JavaVersion.VERSION_1_6
-targetCompatibility = JavaVersion.VERSION_1_6
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+}
 
 dependencies {
     compile "com.badlogicgames.gdx:gdx:$gdxVersion"
     compile "org.scala-lang:scala-library:$scalaVersion"
     testCompile "org.scalatest:scalatest_$scalaLangVersion:$scalaTestVersion"
+    testRuntime 'org.pegdown:pegdown:1.1.0'
 }
 
 compileScala {
     scalaCompileOptions.useCompileDaemon = true
 
     // optionally specify host and port of the daemon:
+    scalaCompileOptions.additionalParameters = ["-language:postfixOps", "-language:implicitConversions", "-feature"]//, "-Ylog-classpath"]
     scalaCompileOptions.daemonServer = "localhost:4243"
     scalaCompileOptions.useAnt = false
 }
 
+test {
+    maxParallelForks = 1
+}
+
 task sourceJar(type: Jar) {
-    from sourceSets.main.allJava
+    from sourceSets.main.allSource
 }
 
 publishing {
@@ -60,10 +77,33 @@ configurations {
   deployerJars
 }
 
-repositories {
-  mavenLocal()
-  mavenCentral()
-  maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+release {
+    failOnCommitNeeded = true
+    failOnPublishNeeded = true
+    failOnSnapshotDependencies = true
+    failOnUnversionedFiles = true
+    failOnUpdateNeeded = true
+    revertOnFail = true
+    preCommitText = ''
+    preTagCommitMessage = 'Pre-tag commit: '
+    tagCommitMessage = 'Creating tag '
+    newVersionCommitMessage = 'Release version '
+    tagTemplate = '${version}'
+    versionPropertyFile = 'gradle.properties'
+    versionProperties = []
+    buildTasks = ['build']
+    versionPatterns = [
+            /(\d+)([^\d]*$)/: { Matcher m, Project p -> m.replaceAll("${(m[0][1] as int) + 1}${m[0][2]}") }
+    ]
+    scmAdapters = [
+            net.researchgate.release.GitAdapter,
+    ]
+
+    git {
+        requireBranch = 'master'
+        pushToRemote = 'origin'
+        pushToCurrentBranch = false
+    }
 }
 
 idea {
