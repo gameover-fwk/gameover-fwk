@@ -20,7 +20,7 @@ apply plugin: 'idea'
 apply plugin: 'maven-publish'
 apply plugin: "com.github.maiflai.scalatest"
 
-group = 'gameover.fwk'
+group = 'io.github.gameover-fwk'
 version = '0.2.0-SNAPSHOT'
 
 ext {
@@ -63,7 +63,7 @@ task sourceJar(type: Jar) {
 publishing {
     publications {
         maven(MavenPublication) {
-            artifactId 'fwk'
+            artifactId 'gameover-fwk'
 
             from components.java
             artifact sourceJar {
