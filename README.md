@@ -15,7 +15,7 @@ gradlew publishToMavenLocal
 ```
 
 ## Features
-Check wbsite: http://pixelduck.github.io/gameover-game-framework/
+Check website: http://gameover-fwk.github.io/gameover-fwk/
 
 ## License ##
 The framework is based on The [MIT License (MIT)](https://en.wikipedia.org/wiki/MIT_License)
