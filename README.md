@@ -14,9 +14,27 @@ to publish on a local Maven repository, run:
 gradlew publishToMavenLocal
 ```
 
-to publish to sonatype, run:
+## Use the framework ##
+Jar and source are available on [Sonatype](http://www.sonatype.org/) repository.
+With maven, add dependency:
 ```
-gradle uploadArchives
+<dependency>
+  <groupId>io.github.gameover-fwk</groupId>
+  <artifactId>gameover-fwk</artifactId>
+  <version>${gameoverFwkVersion}</version>
+</dependency>
+```
+
+With gradle, add dependency:
+```
+dependencies {
+    compile "io.github.gameover-fwk:gameover-fwk:$gameoverFwkVersion"
+}
+```
+
+With SBT, add dependency:
+```
+libraryDependencies += "io.github.gameover-fwk" % "gameover-fwk" % gameoverFwkVersion
 ```
 
 ## Features
