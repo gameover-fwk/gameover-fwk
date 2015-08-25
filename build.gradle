@@ -1,5 +1,3 @@
-import java.util.regex.Matcher
-
 buildscript {
     repositories {
         mavenCentral()
@@ -19,9 +17,12 @@ apply plugin: 'scala'
 apply plugin: 'idea'
 apply plugin: 'maven-publish'
 apply plugin: "com.github.maiflai.scalatest"
+apply plugin: 'maven'
+apply plugin: 'signing'
 
 group = 'io.github.gameover-fwk'
-version = '0.2.0-SNAPSHOT'
+archivesBaseName = "gameover-fwk"
+version = '0.2.0'
 
 ext {
     gdxVersion = '1.5.4'
@@ -56,8 +57,23 @@ test {
     maxParallelForks = 1
 }
 
-task sourceJar(type: Jar) {
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
     from sourceSets.main.allSource
+}
+
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
+
+signing {
+    sign configurations.archives
 }
 
 publishing {
@@ -66,7 +82,7 @@ publishing {
             artifactId 'gameover-fwk'
 
             from components.java
-            artifact sourceJar {
+            artifact sourcesJar {
                 classifier "sources"
             }
         }
@@ -77,32 +93,48 @@ configurations {
   deployerJars
 }
 
-release {
-    failOnCommitNeeded = true
-    failOnPublishNeeded = true
-    failOnSnapshotDependencies = true
-    failOnUnversionedFiles = true
-    failOnUpdateNeeded = true
-    revertOnFail = true
-    preCommitText = ''
-    preTagCommitMessage = 'Pre-tag commit: '
-    tagCommitMessage = 'Creating tag '
-    newVersionCommitMessage = 'Release version '
-    tagTemplate = '${version}'
-    versionPropertyFile = 'gradle.properties'
-    versionProperties = []
-    buildTasks = ['build']
-    versionPatterns = [
-            /(\d+)([^\d]*$)/: { Matcher m, Project p -> m.replaceAll("${(m[0][1] as int) + 1}${m[0][2]}") }
-    ]
-    scmAdapters = [
-            net.researchgate.release.GitAdapter,
-    ]
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 
-    git {
-        requireBranch = 'master'
-        pushToRemote = 'origin'
-        pushToCurrentBranch = false
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            pom.project {
+                name 'gameover-fwk'
+                packaging 'jar'
+                artifactId 'gameover-fwk'
+                description 'A framework to help developing games and UI with LibGDX and scala'
+                url 'http://gameover-fwk.github.io/gameover-fwk/'
+
+                scm {
+                    connection 'scm:git:https://github.com/gameover-fwk/gameover-fwk/'
+                    developerConnection 'scm:git:https://github.com/gameover-fwk/gameover-fwk/'
+                    url 'https://github.com/gameover-fwk/gameover-fwk/'
+                }
+
+                licenses {
+                    license {
+                        name 'MIT license'
+                        url 'https://en.wikipedia.org/wiki/MIT_License'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'pixelduck'
+                        name 'Olivier Martin'
+                        email 'pixelduck.game@gmail.com'
+                    }
+                }
+            }
+        }
     }
 }
 

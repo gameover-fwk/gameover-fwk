@@ -14,6 +14,11 @@ to publish on a local Maven repository, run:
 gradlew publishToMavenLocal
 ```
 
+to publish to sonatype, run:
+```
+gradle uploadArchives
+```
+
 ## Features
 Check website: http://gameover-fwk.github.io/gameover-fwk/
 
