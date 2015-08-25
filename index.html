@@ -12,27 +12,19 @@
   <body>
     <section class="page-header">
       <h1 class="project-name">Gameover-fwk</h1>
-      <h2 class="project-tagline">The Gameover framework can be used to develop games or ui application based on LibGDX. The code is developed with scala and has dependencies with LibGDx </h2>
+      <h2 class="project-tagline">The Gameover framework can be used to develop games or ui application with Scala and LibGDX.</h2>
       <a href="https://github.com/gameover-fwk/gameover-fwk" class="btn">View on GitHub</a>
       <a href="https://github.com/gameover-fwk/gameover-fwk/zipball/master" class="btn">Download .zip</a>
       <a href="https://github.com/gameover-fwk/gameover-fwk/tarball/master" class="btn">Download .tar.gz</a>
     </section>
 
     <section class="main-content">
-      <h3>
-<a id="features" class="anchor" href="#features" aria-hidden="true"><span class="octicon octicon-link"></span></a>Features</h3>
+      <h1>
+<a id="gameover-framework" class="anchor" href="#gameover-framework" aria-hidden="true"><span class="octicon octicon-link"></span></a>Gameover framework</h1>
 
-<ul>
-<li>A version of LibGDX Array class to support scala functional programming (map, flatMap, filter)</li>
-<li>A definition of A* path-finding algorithm and a simple implementation for 2D games</li>
-<li>A graphic resources loader which support reloading on the fly</li>
-<li>A Shader memory helper to easily activate/disabled shaders</li>
-<li>An extension of TileMapRenderer to enabled fake perspective in 2D games</li>
-<li>An action holder trait with several implementation to manage input action from keyboard or from UI</li>
-<li>An object pool trait and some implementation for most used libgdx class (Vector2, Rectangle...)</li>
-<li>Some missing math, gfx, polygons utilities</li>
-<li>A trait LibGDXHelper to help the usage of libgdx in classes</li>
-</ul>
+<p>This framework can be used to develop games or ui application based on <a href="https://libgdx.badlogicgames.com">LibGDX</a>
+The code is developed with scala 2.1.x and has dependencies with LibGDX 1.5.x
+The code is available on <a href="https://github.com/gameover-fwl/gameover-fwk">Github</a></p>
 
 <h2>
 <a id="use-the-framework" class="anchor" href="#use-the-framework" aria-hidden="true"><span class="octicon octicon-link"></span></a>Use the framework</h2>
@@ -43,45 +35,56 @@ With maven, add dependency:</p>
 <pre><code>&lt;dependency&gt;
   &lt;groupId&gt;io.github.gameover-fwk&lt;/groupId&gt;
   &lt;artifactId&gt;gameover-fwk&lt;/artifactId&gt;
-  &lt;version&gt;${gameoverFwkVersion}&lt;/version&gt;
+  &lt;version&gt;0.2.1&lt;/version&gt;
 &lt;/dependency&gt;
 </code></pre>
 
 <p>With gradle, add dependency:</p>
 
 <pre><code>dependencies {
-    compile "io.github.gameover-fwk:gameover-fwk:$gameoverFwkVersion"
+    compile "io.github.gameover-fwk:gameover-fwk:0.2.1"
 }
 </code></pre>
 
 <p>With SBT, add dependency:</p>
 
-<pre><code>libraryDependencies += "io.github.gameover-fwk" % "gameover-fwk" % gameoverFwkVersion
+<pre><code>libraryDependencies += "io.github.gameover-fwk" % "gameover-fwk" % "0.2.1"
 </code></pre>
 
-<h3>
-<a id="build" class="anchor" href="#build" aria-hidden="true"><span class="octicon octicon-link"></span></a>Build</h3>
+<h2>
+<a id="features" class="anchor" href="#features" aria-hidden="true"><span class="octicon octicon-link"></span></a>Features</h2>
+
+<ul>
+<li>A trait LibGDXHelper to help the usage of libgdx in classes. The trait contains a class for implicit conversion from LibGDX Array ti a class supporting scala functional programming (map, flatMap, filter...)</li>
+<li>A definition of A* path-finding algorithm and a simple implementation for 2D games</li>
+<li>A graphic resources loader which support reloading on the fly</li>
+<li>A Shader memory helper to easily activate/disabled shaders</li>
+<li>An extension of TileMapRenderer to enabled fake perspective in 2D games</li>
+<li>An action holder trait with several implementation to manage input action from keyboard or from UI</li>
+<li>An object pool trait and some implementation for most used libgdx class (Vector2, Rectangle...)</li>
+<li>Some missing math, gfx, polygons utilities</li>
+</ul>
+
+<h2>
+<a id="build-framework-and-deploy-on-local-repository" class="anchor" href="#build-framework-and-deploy-on-local-repository" aria-hidden="true"><span class="octicon octicon-link"></span></a>Build framework and deploy on local repository</h2>
 
 <p>To build the framework, just run gradle task:</p>
 
-<pre><code>gradle clean build
+<pre><code>gradlew clean build
 </code></pre>
 
 <p>to publish on a local Maven repository, run:</p>
 
-<pre><code>gradle publishToMavenLocal
+<pre><code>gradlew publishToMavenLocal
 </code></pre>
 
-<h3>
-<a id="license" class="anchor" href="#license" aria-hidden="true"><span class="octicon octicon-link"></span></a>License</h3>
+<h2>
+<a id="license" class="anchor" href="#license" aria-hidden="true"><span class="octicon octicon-link"></span></a>License</h2>
 
-<p>The framework is based on The MIT License (MIT) The framework was created by Olivier MARTIN <a href="mailto:pixelduck.game@gmail.com">pixelduck.game@gmail.com</a>.
-Authors and contributors are listed in file contributors.txt in the root of the project. Feel free to submit your Pull </p>
-
-<h3>
-<a id="other-links" class="anchor" href="#other-links" aria-hidden="true"><span class="octicon octicon-link"></span></a>Other links</h3>
-
-<p>See author main web site: <a href="http://gameover.co.in">http://gameover.co.in</a></p>
+<p>The framework is based on The <a href="https://en.wikipedia.org/wiki/MIT_License">MIT License (MIT)</a>
+The framework was created by <a href="http://gameover.co.in">Olivier MARTIN</a> <a href="mailto:pixelduck.game@gmail.com">pixelduck.game@gmail.com</a>.
+Authors and contributors are listed in file <a href="contributors.txt">contributors.txt</a> in the root of the project.
+Feel free to submit your Pull Request!</p>
 
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/gameover-fwk/gameover-fwk">Gameover-fwk</a> is maintained by <a href="https://github.com/gameover-fwk">gameover-fwk</a>.</span>
