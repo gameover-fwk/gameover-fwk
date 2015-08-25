@@ -3,10 +3,10 @@ package gameover.fwk.libgdx.gfx
 import java.util.Comparator
 
 import com.badlogic.gdx.math.{Rectangle, Vector2}
-import gameover.fwk.libgdx.collection.GdxArray
+import gameover.fwk.libgdx.utils.LibGDXHelper
 import gameover.fwk.pool.Vector2Pool
 
-object GeometryUtils {
+object GeometryUtils extends LibGDXHelper{
 
   def computeTiledIntersectionPoints(x1: Float, y1: Float, x2: Float, y2: Float): GdxArray[Vector2] = {
     val ret = new GdxArray[Vector2]

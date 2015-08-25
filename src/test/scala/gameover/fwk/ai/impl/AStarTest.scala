@@ -2,7 +2,7 @@ package gameover.fwk.ai.impl
 
 import com.badlogic.gdx.math.{GridPoint2, Vector2}
 import gameover.fwk.ai.{AStar, CollisionState}
-import gameover.fwk.libgdx.collection.GdxArray
+import gameover.fwk.libgdx.utils.LibGDXHelper
 import org.scalatest._
 
 /**
@@ -10,7 +10,7 @@ import org.scalatest._
  * @author olmartin@expedia.com
  * @since 2015-08-09
  */
-class AStarTest extends FlatSpec with MapForTest with SpriteForTest with GivenWhenThen {
+class AStarTest extends FlatSpec with LibGDXHelper with MapForTest with SpriteForTest with GivenWhenThen {
 
   println(collisionDetector)
 

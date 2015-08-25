@@ -1,66 +1,71 @@
 package gameover.fwk.libgdx.collection
 
+import gameover.fwk.libgdx.utils.LibGDXHelper
 import org.scalatest.FlatSpec
 
-class GdxArrayTest extends FlatSpec {
+class LibGDXHelperTest extends FlatSpec with LibGDXHelper {
+
   "An empty GDXArray" should "have size 0" in {
-    val array = GdxArray[Int]()
+    val array = new GdxArray[Int]()
     assert(array.size == 0)
     assert(array.isEmpty)
   }
 
   it should "produce NoSuchElementException when head is invoked" in {
     intercept[NoSuchElementException] {
-      val array = GdxArray[Int]()
+      val array = new GdxArray[Int]()
       array.head
     }
   }
 
   it should "produce NoSuchElementException when tail is invoked" in {
     intercept[NoSuchElementException] {
-      val array = GdxArray[Int]()
+      val array = new GdxArray[Int]()
       array.tail
     }
   }
 
   it should "has a size of 1 when we an element is added" in {
-    val array = GdxArray[Int]()
+    val array = new GdxArray[Int]()
     array.add(123)
     assert(array.size == 1)
   }
 
   it should "be useable with a foreach" in {
-    val array = GdxArray[Int]()
+    val array = new GdxArray[Int]()
     var list: List[Int] = Nil
     array.foreach((x: Int) => list = x :: list)
     assert(array.size == list.size)
   }
 
   it should "be useable with map" in {
-    val array = GdxArray[Int]()
+    val array = new GdxArray[Int]()
     val size = array.size
     array.map((x: Int) => x * 2)
     assert(array.size == size)
   }
 
   it should "be useable with filter" in {
-    val array = GdxArray[Int]()
+    val array = new GdxArray[Int]()
     array.filter((x: Int) => x % 2 == 0)
     assert(array.isEmpty)
   }
 
   "A GDX array containing one element" should "return an empty array when tail is invoked" in {
-    val array = GdxArray[Int](123)
+    val array = new GdxArray[Int]()
+    array.add(123)
     assert(array.size == 1)
     assert(array.tail.isEmpty)
   }
 
   it should "returns the element is head is invoked" in {
-    val array = GdxArray[Int](123)
+    val array = new GdxArray[Int]()
+    array.add(123)
     array.head
   }
 
-  val array = GdxArray[Int](1,2,3,4,5)
+  val array = new GdxArray[Int]()
+  array.addAll(1,2,3,4,5)
 
   "A GDXArray containing 5 elements" should "be useable with a foreach" in {
     var list: List[Int] = Nil

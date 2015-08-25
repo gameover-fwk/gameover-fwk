@@ -2,7 +2,6 @@ package gameover.fwk.ai
 
 import com.badlogic.gdx.math.{GridPoint2, MathUtils, Rectangle, Vector2}
 import com.badlogic.gdx.utils.Array
-import gameover.fwk.libgdx.collection.GdxArray
 import gameover.fwk.libgdx.utils.LibGDXHelper
 import gameover.fwk.pool.{GridPoint2Pool, Vector2Pool}
 
@@ -57,7 +56,7 @@ class AStar(hComputeStrategy: HComputeStrategy) extends LibGDXHelper {
       val smoothPath: GdxArray[Vector2] = new GdxArray[Vector2]
       computePointForSmoothPathAuxRecursively(area, path, 0, MathUtils.floor(center.x), MathUtils.floor(center.y), smoothPath)
       if (path.nonEmpty) {
-        val last: GridPoint2 = path.peekLast()
+        val last: GridPoint2 = path.peek()
         if (MathUtils.floor(tx) == last.x && MathUtils.floor(ty) == last.y) smoothPath.add(Vector2Pool.obtain(tx, ty))
       }
       Vector2Pool.free(center)

@@ -2,11 +2,12 @@ package gameover.fwk.ai.impl
 
 import com.badlogic.gdx.math.{Rectangle, Vector2}
 import gameover.fwk.ai.CollisionDetector
-import gameover.fwk.libgdx.collection.GdxArray
 import gameover.fwk.libgdx.gfx.GeometryUtils
+import gameover.fwk.libgdx.utils.LibGDXHelper
 import gameover.fwk.pool.Vector2Pool
 
-abstract class BasicCollisionDetector extends CollisionDetector{
+
+abstract class BasicCollisionDetector extends CollisionDetector with LibGDXHelper {
 
   override def isDirect(area: Rectangle, targetX: Float, targetY: Float, onlyBlocking: Boolean): Boolean = {
     val center: Vector2 = area.getCenter(Vector2Pool.obtain())

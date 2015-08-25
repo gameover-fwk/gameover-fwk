@@ -1,7 +1,7 @@
 package gameover.fwk.ai
 
 import com.badlogic.gdx.math.{Rectangle, Vector2}
-import gameover.fwk.libgdx.collection.GdxArray
+import com.badlogic.gdx.utils.{Array => GdxArray}
 
 trait CollisionDetector {
 

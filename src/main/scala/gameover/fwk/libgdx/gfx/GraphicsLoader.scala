@@ -148,7 +148,7 @@ object GraphicsLoader extends Disposable with Logs with LibGDXHelper {
     if (animationFile != null && animationFile.exists) {
       val texture: Texture = new Texture(animationFile)
       val regions: Array[Array[TextureRegion]] = TextureRegion.split(texture, width, height)
-      val animArray = new BadlogicGdxArray[TextureRegion](regions(0).length)
+      val animArray = new GdxArray[TextureRegion](regions(0).length)
       for (i <- regions(0).indices) {
         animArray.add(regions(0)(i))
       }
@@ -164,7 +164,7 @@ object GraphicsLoader extends Disposable with Logs with LibGDXHelper {
     if (animationFile != null && animationFile.exists) {
       val texture = new Texture(animationFile)
       val regions = TextureRegion.split(texture, width, height)
-      val animArray = new BadlogicGdxArray[TextureRegion](index.length)
+      val animArray = new GdxArray[TextureRegion](index.length)
       for (i <- index) {
         animArray.add(regions(0)(i))
       }

@@ -4,7 +4,6 @@ import com.badlogic.gdx.maps.tiled.{TiledMap, TiledMapTileLayer}
 import com.badlogic.gdx.maps.{MapLayer, MapLayers}
 import com.badlogic.gdx.math.{Intersector, Rectangle, Vector2}
 import gameover.fwk.ai.CollisionState
-import gameover.fwk.libgdx.collection.GdxArray
 import gameover.fwk.libgdx.gfx.GeometryUtils
 import gameover.fwk.pool.{RectanglePool, Vector2Pool}
 
@@ -116,7 +115,7 @@ class MapCollisionDetector extends BasicCollisionDetector {
   }
 
   override def checkCollision(area: Rectangle, movingSpriteVelocity: Vector2, onlyBlocking: Boolean): GdxArray[Rectangle] = {
-    val ret = GdxArray[Rectangle]()
+    val ret = new GdxArray[Rectangle]()
     val c1 = Vector2Pool.obtain(area.x, area.y)
     val c2 = Vector2Pool.obtain(area.x + area.width, area.y)
     val c3 = Vector2Pool.obtain(area.x, area.y + area.height)

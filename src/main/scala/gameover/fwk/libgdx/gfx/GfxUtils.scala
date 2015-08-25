@@ -13,7 +13,7 @@ object GfxUtils extends LibGDXHelper {
     val pixmap = ScreenUtils.getFrameBufferPixmap(0, 0, width, height)
     val pixels = pixmap.getPixels
     val amountOfBytes = width * height * 4
-    val lines = new BadlogicGdxArray[Byte](amountOfBytes)
+    val lines = new Array[Byte](amountOfBytes)
     val amountOfBytesPerLine: Int = width * 4
     for (i <- 0 to height - 1) {
       pixels.position((height - i - 1) * amountOfBytesPerLine)

@@ -1,10 +1,10 @@
 package gameover.fwk.libgdx.gfx
 
 import com.badlogic.gdx.math.{Polygon, Vector2}
-import gameover.fwk.libgdx.collection.GdxArray
+import gameover.fwk.libgdx.utils.LibGDXHelper
 import gameover.fwk.pool.Vector2Pool
 
-object Polygons {
+object Polygons extends LibGDXHelper {
 
   def createArcAsPolygon(x: Float, y: Float, radius: Float, start: Float, angle: Float, segments: Int): Polygon = {
     if (segments < 1) throw new IllegalArgumentException("arc need at least 1 segment")
@@ -58,8 +58,8 @@ object Polygons {
       ret = Vector2Pool.obtainAsGdxArray(segments + 1)
     }
     else {
-      def f = new Vector2
-      ret = GdxArray.fill[Vector2](segments + 1)(f)
+      def f = () => new Vector2
+      ret = new GdxArray[Vector2]().fill(segments + 1)(f)
     }
     for (i <- 0 to segments) {
       val temp: Float = cx
