@@ -34,6 +34,31 @@
 <li>A trait LibGDXHelper to help the usage of libgdx in classes</li>
 </ul>
 
+<h2>
+<a id="use-the-framework" class="anchor" href="#use-the-framework" aria-hidden="true"><span class="octicon octicon-link"></span></a>Use the framework</h2>
+
+<p>Jar and source are available on <a href="http://www.sonatype.org/">Sonatype</a> repository.
+With maven, add dependency:</p>
+
+<pre><code>&lt;dependency&gt;
+  &lt;groupId&gt;io.github.gameover-fwk&lt;/groupId&gt;
+  &lt;artifactId&gt;gameover-fwk&lt;/artifactId&gt;
+  &lt;version&gt;${gameoverFwkVersion}&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+
+<p>With gradle, add dependency:</p>
+
+<pre><code>dependencies {
+    compile "io.github.gameover-fwk:gameover-fwk:$gameoverFwkVersion"
+}
+</code></pre>
+
+<p>With SBT, add dependency:</p>
+
+<pre><code>libraryDependencies += "io.github.gameover-fwk" % "gameover-fwk" % gameoverFwkVersion
+</code></pre>
+
 <h3>
 <a id="build" class="anchor" href="#build" aria-hidden="true"><span class="octicon octicon-link"></span></a>Build</h3>
 
