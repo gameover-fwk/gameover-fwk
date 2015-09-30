@@ -25,11 +25,11 @@ apply plugin: 'io.codearte.nexus-staging'
 
 group = 'io.github.gameover-fwk'
 archivesBaseName = "gameover-fwk"
-version = '0.2.1'
+version = '0.2.2-SNAPSHOT'
 
 ext {
     gdxVersion = '1.5.4'
-    scalaVersion = '2.11.5'
+    scalaVersion = '2.11.7'
     scalaLangVersion = scalaVersion.substring(0, scalaVersion.lastIndexOf('.'))
     scalaTestVersion = '2.2.4'
 }
