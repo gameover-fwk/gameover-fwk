@@ -105,10 +105,10 @@ object GraphicsLoader extends Disposable with Logs with LibGDXHelper {
     }
   }
 
-  def animation(key: String): Animation = animations.getOrElse(key, null)
-  def pixmap(key: String): Pixmap = pixmaps.getOrElse(key, null)
-  def texture(key: String): Texture = textures.getOrElse(key, null)
-  def ninePatch(key: String): NinePatch = ninePatches.getOrElse(key, null)
+  def animation(key: String): Option[Animation] = animations.get(key)
+  def pixmap(key: String): Option[Pixmap] = pixmaps.get(key)
+  def texture(key: String): Option[Texture] = textures.get(key)
+  def ninePatch(key: String): Option[NinePatch] = ninePatches.get(key)
 
   def dispose() {
     pixmaps.values.foreach(_.dispose())
