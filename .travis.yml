@@ -20,7 +20,7 @@ before_install:
   - wget ${key_wget_url} -O secring.gpg
 
 install:
-  - ./gradlew assemble -PnexusUsername="${SONATYPE_USERNAME}" -PnexusPassword="${SONATYPE_PASSWORD}" -Psigning.keyId="${signing.keyId}" -Psigning.password="${signing.password}" -Psigning.secretKeyRingFile="./secring.gpg"
+  - ./gradlew assemble -PnexusUsername="${SONATYPE_USERNAME}" -PnexusPassword="${SONATYPE_PASSWORD}" -Psigning.keyId="${signing.keyId}" -Psigning.password="${signing.password}" -Psigning.secretKeyRingFile="secring.gpg"
 
 after_success:
   - codecov
