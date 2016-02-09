@@ -14,5 +14,9 @@ cache:
 
 before_install:
   - pip install --user codecov
+
+install:
+  - ./gradlew assemble -PossrhUsername="${ossrhUsername}" -PossrhPassword="${ossrhPassword}"
+
 after_success:
   - codecov
