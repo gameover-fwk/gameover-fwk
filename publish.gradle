@@ -1,0 +1,44 @@
+apply plugin: 'nexus'
+
+modifyPom {
+  project {
+    name 'gameover-fwk'
+    packaging 'jar'
+    artifactId 'gameover-fwk'
+    description 'A framework to help developing games and UI with LibGDX and scala'
+    url 'http://gameover-fwk.github.io/gameover-fwk/'
+
+    organization {
+      name 'Gameover indy games'
+      url 'http://gameover.co.in'
+    }
+    licenses {
+      license {
+        name 'MIT License'
+        url 'http://www.opensource.org/licenses/mit-license.php'
+        distribution 'repo'
+      }
+    }
+    scm {
+      connection 'scm:git:https://github.com/gameover-fwk/gameover-fwk/'
+      developerConnection 'scm:git:https://github.com/gameover-fwk/gameover-fwk/'
+      url 'https://github.com/gameover-fwk/gameover-fwk/'
+    }
+    developers {
+      developer {
+        id 'pixelduck'
+        name 'Olivier Martin'
+        email 'pixelduck.game@gmail.com'
+      }
+    }
+  }
+}
+
+nexus {
+  attachJavadoc = true
+  attachSources = true
+  attachTests = true
+  sign = true
+  repositoryUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
+  snapshotRepositoryUrl = 'https://oss.sonatype.org/content/repositories/snapshots'
+}
