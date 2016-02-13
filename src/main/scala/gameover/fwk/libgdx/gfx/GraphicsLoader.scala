@@ -15,7 +15,7 @@ import scala.collection.mutable
  * and reference them through a key. Images can use a pattern to specified addition information.
  *
  */
-class GraphicsLoader(glBuilder: GLBuilder = new LibGdxGLBuilder()) extends Disposable with Logs with LibGDXHelper {
+class GraphicsLoader() extends Disposable with Logs with LibGDXHelper {
   private val animations = new mutable.HashMap[String, Animation]()
   private val pixmaps = new mutable.HashMap[String, Pixmap]()
   private val textures = new mutable.HashMap[String, Texture]()
@@ -104,7 +104,7 @@ class GraphicsLoader(glBuilder: GLBuilder = new LibGdxGLBuilder()) extends Dispo
   }
 
   def registerNinePatch(fh: FileHandle, name: String, left: Int, right: Int, top: Int, bottom: Int) {
-    ninePatches.put(name, glBuilder.newNinePatch(glBuilder.newTexture(fh), left, right, top, bottom))
+    ninePatches.put(name, new NinePatch(new Texture(fh), left, right, top, bottom))
   }
 
   private def valueOfPlayMode(property: String): Animation.PlayMode = {
@@ -137,18 +137,18 @@ class GraphicsLoader(glBuilder: GLBuilder = new LibGdxGLBuilder()) extends Dispo
   def loadTexture(file: String): Texture = {
     val fileHandle: FileHandle = Gdx.files.internal(file)
     if (fileHandle != null && fileHandle.exists) {
-      return glBuilder.newTexture(fileHandle)
+      return new Texture(fileHandle)
     }
     throw new IllegalArgumentException(s"Texture $file not found")
   }
 
   def loadNinePatch(file: String, left: Int, right: Int, top: Int, bottom: Int): NinePatch =
-    glBuilder.newNinePatch(loadTexture(file), left, right, top, bottom)
+    new NinePatch(loadTexture(file), left, right, top, bottom)
 
   def loadPixmap(file: String): Pixmap = {
     val fileHandle: FileHandle = Gdx.files.internal(file)
     if (fileHandle != null && fileHandle.exists) {
-      glBuilder.newPixmap(fileHandle)
+      new Pixmap(fileHandle)
     } else throw new IllegalArgumentException(s"Pixmap $file not found")
   }
 
@@ -156,13 +156,13 @@ class GraphicsLoader(glBuilder: GLBuilder = new LibGdxGLBuilder()) extends Dispo
 
   def loadAnimation(animationFile: FileHandle, frameDuration: Float, width: Int, height: Int, playMode: Animation.PlayMode): Animation = {
     if (animationFile != null && animationFile.exists) {
-      val texture: Texture = glBuilder.newTexture(animationFile)
+      val texture: Texture = new Texture(animationFile)
       val regions: Array[Array[TextureRegion]] = TextureRegion.split(texture, width, height)
       val animArray = new GdxArray[TextureRegion](regions(0).length)
       for (i <- regions(0).indices) {
         animArray.add(regions(0)(i))
       }
-      val animation: Animation = glBuilder.newAnimation(frameDuration, animArray)
+      val animation: Animation = new Animation(frameDuration, animArray)
       if (playMode != null) {
         animation.setPlayMode(playMode)
       }
@@ -172,13 +172,13 @@ class GraphicsLoader(glBuilder: GLBuilder = new LibGdxGLBuilder()) extends Dispo
 
   def loadAnimation(animationFile: FileHandle, frameDuration: Float, width: Int, height: Int, playMode: Animation.PlayMode, index: Int*): Animation = {
     if (animationFile != null && animationFile.exists) {
-      val texture = glBuilder.newTexture(animationFile)
+      val texture = new Texture(animationFile)
       val regions = TextureRegion.split(texture, width, height)
       val animArray = new GdxArray[TextureRegion](index.length)
       for (i <- index) {
         animArray.add(regions(0)(i))
       }
-      val animation = glBuilder.newAnimation(frameDuration, animArray)
+      val animation = new Animation(frameDuration, animArray)
       animation.setPlayMode(playMode)
       animation
     } else throw new IllegalArgumentException("Animation " + animationFile + " not found")
