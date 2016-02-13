@@ -6,7 +6,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:1.1.1'
-	classpath 'org.gradle.api.plugins:gradle-nexus-plugin:0.6.1'
+	    classpath 'org.gradle.api.plugins:gradle-nexus-plugin:0.6.1'
         classpath 'com.github.maiflai:gradle-scalatest:0.5', 'org.scoverage:gradle-scoverage:1.0-5-g9c68988'
     }
 }
@@ -26,7 +26,7 @@ defaultTasks 'build'
 
 group = 'io.github.gameover-fwk'
 archivesBaseName = "gameover-fwk"
-version = '0.2.2-SNAPSHO'
+version = '0.2.2-SNAPSHOT'
 
 ext {
     gdxVersion = '1.5.4'
@@ -45,9 +45,11 @@ repositories {
 dependencies {
     compile "com.badlogicgames.gdx:gdx:$gdxVersion"
     compile "org.scala-lang:scala-library:$scalaVersion"
+    testCompile "org.scalamock:scalamock-scalatest-support_$scalaLangVersion:3.2"
     testCompile "org.scalatest:scalatest_$scalaLangVersion:$scalaTestVersion"
     testRuntime 'org.pegdown:pegdown:1.1.0'
     testCompile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
+    testCompile 'junit:junit:4.12'
     testRuntime "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
     scoverage "org.scoverage:scalac-scoverage-plugin_$scalaLangVersion:$scoverageVersion",
             "org.scoverage:scalac-scoverage-runtime_$scalaLangVersion:$scoverageVersion"

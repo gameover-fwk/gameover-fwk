@@ -12,18 +12,30 @@ trait Logs {
   }
 
   def logInfo(t: LogType.Value, message: String) {
-    Gdx.app.log(t.toString, s"[${System.nanoTime}] $message")
+    if (Gdx.app != null)
+      Gdx.app.log(t.toString, s"[${System.nanoTime}] $message")
+    else
+      println(message)
   }
 
   def logError(t: LogType.Value, message: String) {
-    Gdx.app.error(t.toString, s"[${System.nanoTime}] $message")
+    if (Gdx.app != null)
+      Gdx.app.error(t.toString, s"[${System.nanoTime}] $message")
+    else
+      sys.error(message)
   }
 
   def logError(t: LogType.Value, message: String, thr: Throwable) {
-    Gdx.app.error(t.toString, s"[${System.nanoTime}] $message", thr)
+    if (Gdx.app != null)
+      Gdx.app.error(t.toString, s"[${System.nanoTime}] $message", thr)
+    else
+      sys.error(message)
   }
 
   def logDebug(t: LogType.Value, message: String) {
-    Gdx.app.debug(t.toString, s"[${System.nanoTime}] $message")
+    if (Gdx.app != null)
+      Gdx.app.debug(t.toString, s"[${System.nanoTime}] $message")
+    else
+      println(message)
   }
 }
