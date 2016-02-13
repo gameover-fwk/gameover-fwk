@@ -1,9 +1,9 @@
+[![build](https://travis-ci.org/gameover-fwk/gameover-fwk.svg?branch=master)](https://travis-ci.org/gameover-fwk/gameover-fwk)
+
 # Gameover framework
 This framework can be used to develop games or ui application based on [LibGDX](https://libgdx.badlogicgames.com)
 The code is developed with scala 2.1.x and has dependencies with LibGDX 1.5.x
 The code is available on [Github](https://github.com/gameover-fwl/gameover-fwk)
-
-![build](https://travis-ci.org/gameover-fwk/gameover-fwk.svg?branch=master)
 
 ## Use the framework
 Jar and source are available on [Sonatype](http://www.sonatype.org/) repository.
