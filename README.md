@@ -1,4 +1,5 @@
-[![build](https://travis-ci.org/gameover-fwk/gameover-fwk.svg?branch=master)](https://travis-ci.org/gameover-fwk/gameover-fwk)
+[![build](https://travis-ci.org/gameover-fwk/gameover-fwk.svg?branch=master)](https://travis-ci.org/gameover-fwk/gameover-fwk) [![codecov.io](https://codecov.io/github/gameover-fwk/gameover-fwk/coverage.svg?branch=master)](https://codecov.io/github/gameover-fwk/gameover-fwk?branch=master)
+
 
 # Gameover framework
 This framework can be used to develop games or ui application based on [LibGDX](https://libgdx.badlogicgames.com)
