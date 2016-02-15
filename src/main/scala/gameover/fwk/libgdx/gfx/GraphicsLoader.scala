@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.files.FileHandle
 import com.badlogic.gdx.graphics.g2d.{Animation, NinePatch, TextureRegion}
 import com.badlogic.gdx.graphics.{Pixmap, Texture}
+import com.badlogic.gdx.math.Rectangle
 import gameover.fwk.libgdx.scene2d.Disposable
 import gameover.fwk.libgdx.utils.LibGDXHelper
 import gameover.fwk.logging.Logs
@@ -16,12 +17,12 @@ import scala.collection.mutable
  *
  */
 class GraphicsLoader() extends Disposable with Logs with LibGDXHelper {
-  private val animations = new mutable.HashMap[String, Animation]()
+  private val animations = new mutable.HashMap[String, AnimationInfo]()
   private val pixmaps = new mutable.HashMap[String, Pixmap]()
   private val textures = new mutable.HashMap[String, Texture]()
   private val ninePatches = new mutable.HashMap[String, NinePatch]()
 
-  private val animationRegExp = """(\w*)#(\d*)_(\d*(.\d)?)_([LN])""".r
+  private val animationRegExp = """(\w*)%(\d*)_(\d*)_(\d*)_(\d*)#(\d*)_(\d*(.\d*)?)_([LN])""".r
   private val ninePathRegExp = """(\w*)%(\d*)_(\d*)_(\d*)_(\d*)""".r
 
   loadGfx()
@@ -73,8 +74,9 @@ class GraphicsLoader() extends Disposable with Logs with LibGDXHelper {
   private def load(fh: FileHandle) {
     val fileName: String = fh.name.substring(0, fh.name.indexOf(".png"))
     fileName match {
-      case animationRegExp(name, nbImages, frameDuration, _, playMode) =>
-        registerAnimation(fh, name, nbImages.toInt, s"${frameDuration}f".toFloat, valueOfPlayMode(playMode))
+      case animationRegExp(name, x, y, width, height, nbImages, frameDuration, _, playMode) =>
+        val area  = new Rectangle(x.toFloat, y.toFloat, width.toFloat, height.toFloat)
+        registerAnimation(fh, name, area, nbImages.toInt, s"${frameDuration}f".toFloat, valueOfPlayMode(playMode))
       case ninePathRegExp(name, left, right, top, bottom) =>
         registerNinePatch(fh, name, left.toInt, right.toInt, top.toInt, bottom.toInt)
       case _ =>
@@ -82,17 +84,17 @@ class GraphicsLoader() extends Disposable with Logs with LibGDXHelper {
     }
   }
 
-  def registerAnimation(fh: FileHandle, name: String, nbImages:Int, frameDuration: Float, playMode: Animation.PlayMode) {
+  def registerAnimation(fh: FileHandle, name: String, area: Rectangle, nbImages:Int, frameDuration: Float, playMode: Animation.PlayMode) {
     val pixmap: Pixmap = new Pixmap(fh)
     val w: Int = pixmap.getWidth / nbImages
     val h: Int = pixmap.getHeight
     pixmap.dispose()
-    var animation: Animation = loadAnimation(fh, frameDuration, w, h, playMode)
-    animations.put(name, animation)
+    val animation: Animation = loadAnimation(fh, frameDuration, w, h, playMode)
+    animations.put(name, AnimationInfo(animation, area))
     Gdx.app.log(getClass.getName, "Load animation " + name)
     if (name.contains("_move_")) {
-      animation = loadAnimation(fh, frameDuration, w, h, playMode, 0)
-      animations.put(name.replaceAll("[_]move[_]", "_stand_"), animation)
+      val standAnimation = loadAnimation(fh, frameDuration, w, h, playMode, 0)
+      animations.put(name.replaceAll("[_]move[_]", "_stand_"), AnimationInfo(standAnimation, area))
     }
   }
 
@@ -114,7 +116,7 @@ class GraphicsLoader() extends Disposable with Logs with LibGDXHelper {
     }
   }
 
-  def animation(key: String): Option[Animation] = animations.get(key)
+  def animation(key: String): Option[AnimationInfo] = animations.get(key)
   def pixmap(key: String): Option[Pixmap] = pixmaps.get(key)
   def texture(key: String): Option[Texture] = textures.get(key)
   def ninePatch(key: String): Option[NinePatch] = ninePatches.get(key)
@@ -184,3 +186,5 @@ class GraphicsLoader() extends Disposable with Logs with LibGDXHelper {
     } else throw new IllegalArgumentException("Animation " + animationFile + " not found")
   }
 }
+
+case class AnimationInfo(anim: Animation, area: Rectangle)
