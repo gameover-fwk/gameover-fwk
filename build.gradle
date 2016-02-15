@@ -1,13 +1,29 @@
+import groovy.json.JsonSlurper
+
 buildscript {
+    def versionFile = file('versions.json')
+    def json = new JsonSlurper().parseText(versionFile.text)
+
     repositories {
         mavenCentral()
         mavenLocal()
-	jcenter()
+        jcenter()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:1.1.1'
-	    classpath 'org.gradle.api.plugins:gradle-nexus-plugin:0.6.1'
+        classpath 'org.gradle.api.plugins:gradle-nexus-plugin:0.6.1'
         classpath 'com.github.maiflai:gradle-scalatest:0.5', 'org.scoverage:gradle-scoverage:1.0-5-g9c68988'
+    }
+
+    ext {
+        appName = 'gameover-fwk'
+        appVersion = json.version
+
+        scalaVersion = json.scalaVersion
+        gdxVersion = json.libGDXVersion
+        scalaLangVersion = scalaVersion.substring(0, scalaVersion.lastIndexOf('.'))
+        scalaTestVersion = json.scalaTestVersion
+        scoverageVersion = json.scoverageVersion
     }
 }
 
@@ -26,15 +42,7 @@ defaultTasks 'build'
 
 group = 'io.github.gameover-fwk'
 archivesBaseName = "gameover-fwk"
-version = '0.2.2-SNAPSHOT'
-
-ext {
-    gdxVersion = '1.5.4'
-    scalaVersion = '2.11.7'
-    scalaLangVersion = scalaVersion.substring(0, scalaVersion.lastIndexOf('.'))
-    scalaTestVersion = '2.2.4'
-    scoverageVersion = '1.0.2'
-}
+version = "$appVersion"
 
 repositories {
     mavenLocal()
@@ -56,12 +64,13 @@ dependencies {
 }
 
 compileScala {
-    scalaCompileOptions.useCompileDaemon = true
-
-    // optionally specify host and port of the daemon:
-    scalaCompileOptions.additionalParameters = ["-language:postfixOps", "-language:implicitConversions", "-feature"]//, "-Ylog-classpath"]
-    scalaCompileOptions.daemonServer = "localhost:4243"
+    sourceCompatibility = JavaVersion.VERSION_1_6
+    targetCompatibility = JavaVersion.VERSION_1_6
+    // activate incremental compilation
     scalaCompileOptions.useAnt = false
+    scalaCompileOptions.additionalParameters = ["-language:postfixOps", "-feature"]//, "-Ylog-classpath"]
+    scalaCompileOptions.useCompileDaemon = true
+    scalaCompileOptions.daemonServer = "localhost:4243"
 }
 
 test {
