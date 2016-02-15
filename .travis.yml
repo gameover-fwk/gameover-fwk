@@ -23,5 +23,6 @@ install:
   - ./gradlew assemble -PnexusUsername="${SONATYPE_USERNAME}" -PnexusPassword="${SONATYPE_PASSWORD}" -Psigning.keyId="${SIGNING_KEY_ID}" -Psigning.password="${SIGNING_KEY_PASSWORD}" -Psigning.secretKeyRingFile="secring.gpg"
 
 after_success:
+  _ ./gradlew uploadArchives
   - ./gradlew reportScoverage
   - codecov
