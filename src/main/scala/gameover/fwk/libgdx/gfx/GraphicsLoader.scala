@@ -22,7 +22,7 @@ class GraphicsLoader() extends Disposable with Logs with LibGDXHelper {
   private val textures = new mutable.HashMap[String, Texture]()
   private val ninePatches = new mutable.HashMap[String, NinePatch]()
 
-  private val animationRegExp = """(\w*)%(\d*)_(\d*)_(\d*)_(\d*)#(\d*)_(\d*(.\d*)?)_([LN])""".r
+  private val animationRegExp = """(\w*)(?:%(\d*)_(\d*)_(\d*)_(\d*))#(\d*)_(\d*(.\d*)?)_([LN])""".r
   private val ninePathRegExp = """(\w*)%(\d*)_(\d*)_(\d*)_(\d*)""".r
 
   loadGfx()
@@ -74,9 +74,11 @@ class GraphicsLoader() extends Disposable with Logs with LibGDXHelper {
   private def load(fh: FileHandle) {
     val fileName: String = fh.name.substring(0, fh.name.indexOf(".png"))
     fileName match {
+      case animationRegExp(name, null, null, null, null, nbImages, frameDuration, _, playMode) =>
+        registerAnimation(fh, name, None, nbImages.toInt, s"${frameDuration}f".toFloat, valueOfPlayMode(playMode))
       case animationRegExp(name, x, y, width, height, nbImages, frameDuration, _, playMode) =>
         val area  = new Rectangle(x.toFloat, y.toFloat, width.toFloat, height.toFloat)
-        registerAnimation(fh, name, area, nbImages.toInt, s"${frameDuration}f".toFloat, valueOfPlayMode(playMode))
+        registerAnimation(fh, name, Some(area), nbImages.toInt, s"${frameDuration}f".toFloat, valueOfPlayMode(playMode))
       case ninePathRegExp(name, left, right, top, bottom) =>
         registerNinePatch(fh, name, left.toInt, right.toInt, top.toInt, bottom.toInt)
       case _ =>
@@ -84,17 +86,17 @@ class GraphicsLoader() extends Disposable with Logs with LibGDXHelper {
     }
   }
 
-  def registerAnimation(fh: FileHandle, name: String, area: Rectangle, nbImages:Int, frameDuration: Float, playMode: Animation.PlayMode) {
+  def registerAnimation(fh: FileHandle, name: String, optionalArea: Option[Rectangle], nbImages:Int, frameDuration: Float, playMode: Animation.PlayMode) {
     val pixmap: Pixmap = new Pixmap(fh)
     val w: Int = pixmap.getWidth / nbImages
     val h: Int = pixmap.getHeight
     pixmap.dispose()
     val animation: Animation = loadAnimation(fh, frameDuration, w, h, playMode)
-    animations.put(name, AnimationInfo(animation, area))
+    animations.put(name, AnimationInfo(animation, optionalArea))
     Gdx.app.log(getClass.getName, "Load animation " + name)
     if (name.contains("_move_")) {
       val standAnimation = loadAnimation(fh, frameDuration, w, h, playMode, 0)
-      animations.put(name.replaceAll("[_]move[_]", "_stand_"), AnimationInfo(standAnimation, area))
+      animations.put(name.replaceAll("[_]move[_]", "_stand_"), AnimationInfo(standAnimation, optionalArea))
     }
   }
 
@@ -187,4 +189,4 @@ class GraphicsLoader() extends Disposable with Logs with LibGDXHelper {
   }
 }
 
-case class AnimationInfo(anim: Animation, area: Rectangle)
+case class AnimationInfo(anim: Animation, optionalArea: Option[Rectangle])
