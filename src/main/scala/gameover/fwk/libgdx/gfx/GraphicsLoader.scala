@@ -22,7 +22,7 @@ class GraphicsLoader() extends Disposable with Logs with LibGDXHelper {
   private val textures = new mutable.HashMap[String, Texture]()
   private val ninePatches = new mutable.HashMap[String, NinePatch]()
 
-  private val animationRegExp = """(\w*)(?:%(\d*)_(\d*)_(\d*)_(\d*))#(\d*)_(\d*(.\d*)?)_([LN])""".r
+  private val animationRegExp = """(\w*)(?:%(\d*)_(\d*)_(\d*)_(\d*))?#(\d*)_(\d*(.\d*)?)_([LN])""".r
   private val ninePathRegExp = """(\w*)%(\d*)_(\d*)_(\d*)_(\d*)""".r
 
   loadGfx()

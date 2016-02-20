@@ -1,12 +1,9 @@
 package gameover.fwk.libgdx.gfx
 
-import com.badlogic.gdx.graphics.{TextureData, Texture, Pixmap}
-import com.badlogic.gdx.graphics.g2d.{NinePatch, Animation}
+import com.badlogic.gdx.graphics.TextureData
 import com.badlogic.gdx.math.Rectangle
 import gameover.fwk.gdx.GdxTest
-import junit.framework.TestSuite
-import org.scalamock.scalatest.MockFactory
-import org.scalatest.{FlatSpec, BeforeAndAfter}
+import org.scalatest.FlatSpec
 
 class GraphicsLoaderTest extends FlatSpec {
 
@@ -42,20 +39,31 @@ class GraphicsLoaderTest extends FlatSpec {
   }
 
 
-  it should "load properly an animation with the accurate number of frames and duration" in {
-    graphicsLoader.animation("professor_move_right") match {
+  it should "load properly an animation with an ara, the accurate number of frames and duration" in {
+    graphicsLoader.animation("animwitharea_move_right") match {
       case Some(anim) =>
         assert(anim.anim.getFrameDuration == 0.08f)
         assert(anim.anim.getKeyFrames.length == 4)
-        assert(anim.area == new Rectangle(5f, 5f, 3f, 3f))
+        assert(anim.optionalArea.isDefined)
+        assert(anim.optionalArea.get == new Rectangle(5f, 5f, 3f, 3f))
+      case _ => fail("Animation is not found")
+    }
+  }
+
+  it should "load properly an animation without an area, the accurate number of frames and duration" in {
+    graphicsLoader.animation("animwithoutarea_move_right") match {
+      case Some(anim) =>
+        assert(anim.anim.getFrameDuration == 0.08f)
+        assert(anim.anim.getKeyFrames.length == 4)
+        assert(anim.optionalArea.isEmpty)
       case _ => fail("Animation is not found")
     }
   }
 
   it should "create a 'stand' animation from a 'move' animation containing the first frame only" in {
-    val moveAnimation = graphicsLoader.animation("professor_move_right")
+    val moveAnimation = graphicsLoader.animation("animwitharea_move_right")
     assume(moveAnimation.isDefined)
-    graphicsLoader.animation("professor_stand_right") match {
+    graphicsLoader.animation("animwitharea_stand_right") match {
       case Some(standAnim) =>
         assert(standAnim.anim.getKeyFrames.length == 1)
         val td1: TextureData = standAnim.anim.getKeyFrames()(0).getTexture.getTextureData
