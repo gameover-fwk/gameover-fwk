@@ -51,10 +51,10 @@ class GraphicsLoaderTest extends FlatSpec {
   }
 
   it should "load properly an animation without an area, the accurate number of frames and duration" in {
-    graphicsLoader.animation("animwithoutarea_move_right") match {
+    graphicsLoader.animation("name") match {
       case Some(anim) =>
-        assert(anim.anim.getFrameDuration == 0.08f)
-        assert(anim.anim.getKeyFrames.length == 4)
+        assert(anim.anim.getFrameDuration == 0.12f)
+        assert(anim.anim.getKeyFrames.length == 7)
         assert(anim.optionalArea.isEmpty)
       case _ => fail("Animation is not found")
     }

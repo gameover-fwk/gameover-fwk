@@ -22,7 +22,7 @@ class GraphicsLoader() extends Disposable with Logs with LibGDXHelper {
   private val textures = new mutable.HashMap[String, Texture]()
   private val ninePatches = new mutable.HashMap[String, NinePatch]()
 
-  private val animationRegExp = """(\w*)(?:%(\d*)_(\d*)_(\d*)_(\d*))?#(\d*)_(\d*(.\d*)?)_([LN])""".r
+  private val animationRegExp = """(\w*)(?:%(\d*)_(\d*)_(\d*)_(\d*))?#(\d*)_(\d*(?:.\d*)?)_([LN])""".r
   private val ninePathRegExp = """(\w*)%(\d*)_(\d*)_(\d*)_(\d*)""".r
 
   loadGfx()
@@ -74,9 +74,9 @@ class GraphicsLoader() extends Disposable with Logs with LibGDXHelper {
   private def load(fh: FileHandle) {
     val fileName: String = fh.name.substring(0, fh.name.indexOf(".png"))
     fileName match {
-      case animationRegExp(name, null, null, null, null, nbImages, frameDuration, _, playMode) =>
+      case animationRegExp(name, null, null, null, null, nbImages, frameDuration, playMode) =>
         registerAnimation(fh, name, None, nbImages.toInt, s"${frameDuration}f".toFloat, valueOfPlayMode(playMode))
-      case animationRegExp(name, x, y, width, height, nbImages, frameDuration, _, playMode) =>
+      case animationRegExp(name, x, y, width, height, nbImages, frameDuration, playMode) =>
         val area  = new Rectangle(x.toFloat, y.toFloat, width.toFloat, height.toFloat)
         registerAnimation(fh, name, Some(area), nbImages.toInt, s"${frameDuration}f".toFloat, valueOfPlayMode(playMode))
       case ninePathRegExp(name, left, right, top, bottom) =>
