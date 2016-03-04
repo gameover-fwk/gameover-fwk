@@ -20,13 +20,13 @@ With maven, add dependency:
 With gradle, add dependency:
 ```
 dependencies {
-    compile "io.github.gameover-fwk:gameover-fwk:0.2.1"
+    compile "io.github.gameover-fwk:gameover-fwk:0.2.2"
 }
 ```
 
 With SBT, add dependency:
 ```
-libraryDependencies += "io.github.gameover-fwk" % "gameover-fwk" % "0.2.1"
+libraryDependencies += "io.github.gameover-fwk" % "gameover-fwk" % "0.2.2"
 ```
 
 ## Features
@@ -51,7 +51,7 @@ gradlew publishToMavenLocal
 ```
 
 ## License
-The framework is based on The [MIT License (MIT)](https://en.wikipedia.org/wiki/MIT_License)
+The framework is under [MIT License (MIT)](https://en.wikipedia.org/wiki/MIT_License)
 The framework was created by [Olivier MARTIN](http://gameover.co.in) <pixelduck.game@gmail.com>.
 Authors and contributors are listed in file [contributors.txt](contributors.txt) in the root of the project.
 Feel free to submit your Pull Request!
