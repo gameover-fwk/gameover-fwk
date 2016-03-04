@@ -13,7 +13,7 @@ With maven, add dependency:
 <dependency>
   <groupId>io.github.gameover-fwk</groupId>
   <artifactId>gameover-fwk</artifactId>
-  <version>0.2.1</version>
+  <version>0.2.2</version>
 </dependency>
 ```
 
