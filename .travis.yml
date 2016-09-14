@@ -25,6 +25,6 @@ install:
   - ./gradlew assemble -PnexusUsername="${SONATYPE_USERNAME}" -PnexusPassword="${SONATYPE_PASSWORD}" -Psigning.keyId="${SIGNING_KEY_ID}" -Psigning.password="${SIGNING_KEY_PASSWORD}" -Psigning.secretKeyRingFile="secring.gpg"
 
 after_success:
-  - ./gradlew uploadArchives -PnexusUsername="${SONATYPE_USERNAME}" -PnexusPassword="${SONATYPE_PASSWORD}"
+  - ./gradlew uploadArchives -PnexusUsername="${SONATYPE_USERNAME}" -PnexusPassword="${SONATYPE_PASSWORD}" -Psigning.keyId="${SIGNING_KEY_ID}" -Psigning.password="${SIGNING_KEY_PASSWORD}" -Psigning.secretKeyRingFile="secring.gpg"
   - ./gradlew reportScoverage
   - codecov
