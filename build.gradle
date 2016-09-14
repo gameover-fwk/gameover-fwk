@@ -80,6 +80,8 @@ task getVersion << {
   println version
 }
 
+jar.archiveName = "gameover-fwk_$scalaLangVersion"
+
 publishing {
     publications {
         maven(MavenPublication) {
