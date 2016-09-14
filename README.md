@@ -13,20 +13,20 @@ With maven, add dependency:
 <dependency>
   <groupId>io.github.gameover-fwk</groupId>
   <artifactId>gameover-fwk_2.11</artifactId>
-  <version>0.2.2</version>
+  <version>0.2.3</version>
 </dependency>
 ```
 
 With gradle, add dependency:
 ```
 dependencies {
-    compile "io.github.gameover-fwk_2.11:gameover-fwk:0.2.2"
+    compile "io.github.gameover-fwk_2.11:gameover-fwk:0.2.3"
 }
 ```
 
 With SBT, add dependency:
 ```
-libraryDependencies += "io.github.gameover-fwk" %% "gameover-fwk" % "0.2.2"
+libraryDependencies += "io.github.gameover-fwk" %% "gameover-fwk" % "0.2.3"
 ```
 
 ## Features
@@ -39,7 +39,7 @@ libraryDependencies += "io.github.gameover-fwk" %% "gameover-fwk" % "0.2.2"
 * An object pool trait and some implementation for most used libgdx class (Vector2, Rectangle...)
 * Some missing math, gfx, polygons utilities
 
-See [RELEASE_NOTES](Release notes) for a list of changes between version
+See [Release notes](RELEASE_NOTES) for a list of changes between version
 
 ## Build framework and deploy on local repository
 To build the framework, just run gradle task:
