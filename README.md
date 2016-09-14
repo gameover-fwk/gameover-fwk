@@ -3,7 +3,7 @@
 
 # Gameover framework
 This framework can be used to develop games or ui application based on [LibGDX](https://libgdx.badlogicgames.com)
-The code is developed with scala 2.1.x and has dependencies with LibGDX 1.5.x
+The code is developed with scala 2.11.8 and has dependencies with LibGDX 1.9.3
 The code is available on [Github](https://github.com/gameover-fwl/gameover-fwk)
 
 ## Use the framework
@@ -12,7 +12,7 @@ With maven, add dependency:
 ```
 <dependency>
   <groupId>io.github.gameover-fwk</groupId>
-  <artifactId>gameover-fwk</artifactId>
+  <artifactId>gameover-fwk_2.11</artifactId>
   <version>0.2.2</version>
 </dependency>
 ```
@@ -20,13 +20,13 @@ With maven, add dependency:
 With gradle, add dependency:
 ```
 dependencies {
-    compile "io.github.gameover-fwk:gameover-fwk:0.2.2"
+    compile "io.github.gameover-fwk_2.11:gameover-fwk:0.2.2"
 }
 ```
 
 With SBT, add dependency:
 ```
-libraryDependencies += "io.github.gameover-fwk" % "gameover-fwk" % "0.2.2"
+libraryDependencies += "io.github.gameover-fwk" %% "gameover-fwk" % "0.2.2"
 ```
 
 ## Features
@@ -38,6 +38,8 @@ libraryDependencies += "io.github.gameover-fwk" % "gameover-fwk" % "0.2.2"
 * An action holder trait with several implementation to manage input action from keyboard or from UI
 * An object pool trait and some implementation for most used libgdx class (Vector2, Rectangle...)
 * Some missing math, gfx, polygons utilities
+
+See [RELEASE_NOTES](Release notes) for a list of changes between version
 
 ## Build framework and deploy on local repository
 To build the framework, just run gradle task:

@@ -23,25 +23,27 @@ buildscript {
         gdxVersion = json.libGDXVersion
         scalaLangVersion = scalaVersion.substring(0, scalaVersion.lastIndexOf('.'))
         scalaTestVersion = json.scalaTestVersion
+        scalaMockVersion = json.scalaMockVersion
         scoverageVersion = json.scoverageVersion
     }
 }
 
 plugins {
-    id "com.github.maiflai.scalatest" version "0.9"
+    id "com.github.maiflai.scalatest" version "0.14"
     id 'net.researchgate.release' version '2.2.1'
 }
 
 apply plugin: 'scala'
 apply plugin: "com.github.maiflai.scalatest"
 apply plugin: 'scoverage'
+apply plugin: 'maven-publish'
 
 apply from: 'publish.gradle'
 
 defaultTasks 'build'
 
 group = 'io.github.gameover-fwk'
-archivesBaseName = "gameover-fwk"
+archivesBaseName = "gameover-fwk_$scalaLangVersion"
 version = "$appVersion"
 
 repositories {
@@ -53,7 +55,7 @@ repositories {
 dependencies {
     compile "com.badlogicgames.gdx:gdx:$gdxVersion"
     compile "org.scala-lang:scala-library:$scalaVersion"
-    testCompile "org.scalamock:scalamock-scalatest-support_$scalaLangVersion:3.2"
+    testCompile "org.scalamock:scalamock-scalatest-support_$scalaLangVersion:$scalaMockVersion"
     testCompile "org.scalatest:scalatest_$scalaLangVersion:$scalaTestVersion"
     testRuntime 'org.pegdown:pegdown:1.1.0'
     testCompile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
@@ -67,10 +69,7 @@ compileScala {
     sourceCompatibility = JavaVersion.VERSION_1_6
     targetCompatibility = JavaVersion.VERSION_1_6
     // activate incremental compilation
-    scalaCompileOptions.useAnt = false
     scalaCompileOptions.additionalParameters = ["-language:postfixOps", "-feature"]//, "-Ylog-classpath"]
-    scalaCompileOptions.useCompileDaemon = true
-    scalaCompileOptions.daemonServer = "localhost:4243"
 }
 
 test {
@@ -79,4 +78,17 @@ test {
 
 task getVersion << {
   println version
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            artifactId "gameover-fwk_$scalaLangVersion"
+
+            from components.java
+            artifact sourcesJar {
+                classifier "sources"
+            }
+        }
+    }
 }

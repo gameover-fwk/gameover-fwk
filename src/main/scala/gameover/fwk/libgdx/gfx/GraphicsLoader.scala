@@ -92,11 +92,12 @@ class GraphicsLoader() extends Disposable with Logs with LibGDXHelper {
     val h: Int = pixmap.getHeight
     pixmap.dispose()
     val animation: Animation = loadAnimation(fh, frameDuration, w, h, playMode)
-    animations.put(name, AnimationInfo(animation, optionalArea))
+    animations.put(name, AnimationInfo(name, animation, optionalArea))
     Gdx.app.log(getClass.getName, "Load animation " + name)
     if (name.contains("_move_")) {
       val standAnimation = loadAnimation(fh, frameDuration, w, h, playMode, 0)
-      animations.put(name.replaceAll("[_]move[_]", "_stand_"), AnimationInfo(standAnimation, optionalArea))
+      val standName = name.replaceAll("[_]move[_]", "_stand_")
+      animations.put(standName, AnimationInfo(standName, standAnimation, optionalArea))
     }
   }
 
@@ -189,4 +190,4 @@ class GraphicsLoader() extends Disposable with Logs with LibGDXHelper {
   }
 }
 
-case class AnimationInfo(anim: Animation, optionalArea: Option[Rectangle])
+case class AnimationInfo(id: String, anim: Animation, optionalArea: Option[Rectangle])
