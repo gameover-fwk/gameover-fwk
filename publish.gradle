@@ -4,7 +4,7 @@ modifyPom {
   project {
     name 'gameover-fwk'
     packaging 'jar'
-    artifactId 'gameover-fwk'
+    artifactId "gameover-fwk_$scalaLangVersion"
     description 'A framework to help developing games and UI with LibGDX and scala'
     url 'http://gameover-fwk.github.io/gameover-fwk/'
 
@@ -26,7 +26,7 @@ modifyPom {
     }
     developers {
       developer {
-        id 'pixelduck'
+        id 'PixelDuck'
         name 'Olivier Martin'
         email 'pixelduck.game@gmail.com'
       }
