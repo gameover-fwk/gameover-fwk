@@ -70,25 +70,21 @@ class BMFontViewerApp extends ApplicationListener {
   }
 
   override def render() {
-
     Gdx.gl.glClearColor(0, 255, 0, 0)
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
     optionalContext match {
-      case Some(context) =>
-        draw(context)
+      case Some(context) => draw(context)
+      case _ =>
     }
   }
 
-  override def pause() {
-  }
+  override def pause() {}
 
-  override def resume(){
-  }
+  override def resume() {}
 
   override def dispose(): Unit ={
     optionalContext match {
-      case Some(context) =>
-        context.font.dispose()
+      case Some(context) => context.font.dispose()
       case _ =>
     }
   }
