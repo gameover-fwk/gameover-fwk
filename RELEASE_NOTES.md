@@ -1,5 +1,8 @@
 # Gameover framework release notes
 
+## 0.2.4
+* change Perspective layer to handle three layers: a floor layer, a walls layer and a top layer. Use property "level" on the map to know where to render the layer.
+
 ## 0.2.3 (2016-09-14)
 
 * Upgrade libgdx to 1.9.3

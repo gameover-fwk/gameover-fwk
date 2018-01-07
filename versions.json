@@ -1,9 +1,0 @@
-{
-  "version": "0.2.3",
-
-  "scalaVersion": "2.11.8",
-  "libGDXVersion": "1.9.3",
-  "scalaTestVersion": "3.0.0",
-  "scalaMockVersion": "3.2.2",
-  "scoverageVersion": "1.1.0"
-}

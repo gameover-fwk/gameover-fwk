@@ -1,7 +1,7 @@
 import groovy.json.JsonSlurper
 
 buildscript {
-    def versionFile = file('versions.json')
+    def versionFile = file('versions-2.11.json')
     def json = new JsonSlurper().parseText(versionFile.text)
 
     repositories {
@@ -25,6 +25,8 @@ buildscript {
         scalaTestVersion = json.scalaTestVersion
         scalaMockVersion = json.scalaMockVersion
         scoverageVersion = json.scoverageVersion
+        pegdownVersion = json.pegdownVersion
+        junitVersion = json.junitVersion
     }
 }
 
@@ -56,17 +58,17 @@ dependencies {
     compile "org.scala-lang:scala-library:$scalaVersion"
     testCompile "org.scalamock:scalamock-scalatest-support_$scalaLangVersion:$scalaMockVersion"
     testCompile "org.scalatest:scalatest_$scalaLangVersion:$scalaTestVersion"
-    testRuntime 'org.pegdown:pegdown:1.1.0'
+    testRuntime "org.pegdown:pegdown:$pegdownVersion"
     testCompile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
-    testCompile 'junit:junit:4.12'
+    testCompile "junit:junit:$junitVersion"
     testRuntime "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
     scoverage "org.scoverage:scalac-scoverage-plugin_$scalaLangVersion:$scoverageVersion",
             "org.scoverage:scalac-scoverage-runtime_$scalaLangVersion:$scoverageVersion"
 }
 
 compileScala {
-    sourceCompatibility = JavaVersion.VERSION_1_6
-    targetCompatibility = JavaVersion.VERSION_1_6
+    sourceCompatibility = JavaVersion.VERSION_1_7
+    targetCompatibility = JavaVersion.VERSION_1_7
     // activate incremental compilation
     scalaCompileOptions.additionalParameters = ["-language:postfixOps", "-feature"]//, "-Ylog-classpath"]
 }

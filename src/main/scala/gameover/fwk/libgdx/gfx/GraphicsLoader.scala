@@ -91,7 +91,7 @@ class GraphicsLoader() extends Disposable with Logs with LibGDXHelper {
     val w: Int = pixmap.getWidth / nbImages
     val h: Int = pixmap.getHeight
     pixmap.dispose()
-    val animation: Animation = loadAnimation(fh, frameDuration, w, h, playMode)
+    val animation = loadAnimation(fh, frameDuration, w, h, playMode)
     animations.put(name, AnimationInfo(name, animation, optionalArea))
     Gdx.app.log(getClass.getName, "Load animation " + name)
     if (name.contains("_move_")) {
@@ -157,37 +157,39 @@ class GraphicsLoader() extends Disposable with Logs with LibGDXHelper {
     } else throw new IllegalArgumentException(s"Pixmap $file not found")
   }
 
-  def loadAnimation(file: String, frameDuration: Float, size: Int): Animation = loadAnimation(Gdx.files.internal(file), frameDuration, size, size, null)
+  def loadAnimation(file: String, frameDuration: Float, size: Int): Animation[TextureRegion] = loadAnimation(Gdx.files.internal(file), frameDuration, size, size, null)
 
-  def loadAnimation(animationFile: FileHandle, frameDuration: Float, width: Int, height: Int, playMode: Animation.PlayMode): Animation = {
+  def loadAnimation(animationFile: FileHandle, frameDuration: Float, width: Int, height: Int, playMode: Animation.PlayMode): Animation[TextureRegion] = {
     if (animationFile != null && animationFile.exists) {
       val texture: Texture = new Texture(animationFile)
       val regions: Array[Array[TextureRegion]] = TextureRegion.split(texture, width, height)
-      val animArray = new GdxArray[TextureRegion](regions(0).length)
+      val animArray = new GdxArray[TextureRegion](classOf[TextureRegion])
       for (i <- regions(0).indices) {
         animArray.add(regions(0)(i))
       }
-      val animation: Animation = new Animation(frameDuration, animArray)
+      val animation = new Animation[TextureRegion](frameDuration, animArray)
       if (playMode != null) {
         animation.setPlayMode(playMode)
       }
       animation
-    } else throw new IllegalArgumentException("Animation " + animationFile + " not found")
+    } else throw new IllegalArgumentException(s"Animation $animationFile not found")
   }
 
-  def loadAnimation(animationFile: FileHandle, frameDuration: Float, width: Int, height: Int, playMode: Animation.PlayMode, index: Int*): Animation = {
+  def loadAnimation(animationFile: FileHandle, frameDuration: Float, width: Int, height: Int, playMode: Animation.PlayMode, index: Int*): Animation[TextureRegion] = {
     if (animationFile != null && animationFile.exists) {
       val texture = new Texture(animationFile)
       val regions = TextureRegion.split(texture, width, height)
-      val animArray = new GdxArray[TextureRegion](index.length)
+      val animArray = new GdxArray[TextureRegion](classOf[TextureRegion])
       for (i <- index) {
         animArray.add(regions(0)(i))
       }
-      val animation = new Animation(frameDuration, animArray)
-      animation.setPlayMode(playMode)
+      val animation = new Animation[TextureRegion](frameDuration, animArray)
+      if (playMode != null) {
+        animation.setPlayMode(playMode)
+      }
       animation
-    } else throw new IllegalArgumentException("Animation " + animationFile + " not found")
+    } else throw new IllegalArgumentException(s"Animation $animationFile not found")
   }
 }
 
-case class AnimationInfo(id: String, anim: Animation, optionalArea: Option[Rectangle])
+case class AnimationInfo(id: String, anim: Animation[TextureRegion], optionalArea: Option[Rectangle])
