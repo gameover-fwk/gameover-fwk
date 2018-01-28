@@ -7,9 +7,15 @@ import gameover.fwk.ai.CollisionState
 import gameover.fwk.libgdx.gfx.GeometryUtils
 import gameover.fwk.pool.{RectanglePool, Vector2Pool}
 
+import scala.collection.mutable
+
+/**
+  * This class handle collision for a map.
+  */
 class MapCollisionDetector extends BasicCollisionDetector {
 
-  private val collisionTiles = new GdxArray[CollisionSquare]
+  val collisionTiles = new GdxArray[CollisionSquare]
+  val disableCollisionLayers = new mutable.HashSet[String]
 
   var width: Int = 0
   var height: Int = 0
@@ -59,7 +65,7 @@ class MapCollisionDetector extends BasicCollisionDetector {
         height = layer.getHeight
       case _ =>
     }
-    for (i <- 0 to layers.getCount-1) {
+    for (i <- 0 until layers.getCount) {
       val layer: MapLayer = layers.get(i)
       if ("yes" == layer.getProperties.get("collision"))
         analyseLayer(layer, CollisionState.Blocking)
@@ -68,17 +74,19 @@ class MapCollisionDetector extends BasicCollisionDetector {
     }
   }
 
-  def addCollisionTile(collisionSquare: CollisionSquare) = collisionTiles.add(collisionSquare)
+  def addCollisionTile(collisionSquare: CollisionSquare): Unit = collisionTiles.add(collisionSquare)
+
+  def disabledCollisionOnLayer(name: String) : Unit = disableCollisionLayers += name
 
   private def analyseLayer(mapLayer: MapLayer, state: CollisionState.Value) {
     mapLayer match {
       case layer: TiledMapTileLayer =>
-        for (y <- 0 to layer.getHeight - 1) {
-          for (x <- 0 to layer.getWidth - 1) {
+        for (y <- 0 until layer.getHeight) {
+          for (x <- 0 until layer.getWidth) {
             val cell: TiledMapTileLayer.Cell = layer.getCell(x, y)
             if (cell != null) {
               val rect: Rectangle = RectanglePool.obtain(x, y, 1, 1)
-              addCollisionTile(new CollisionSquare(rect, state))
+              addCollisionTile(CollisionSquare(layer.getName, rect, state))
             }
           }
         }
@@ -107,7 +115,7 @@ class MapCollisionDetector extends BasicCollisionDetector {
     val tileY = y.floor.toInt
     if (tileX >= 0 && tileY >= 0 && tileX < width && tileY < height) {
       for (cs <- collisionTiles) {
-        if (cs.r.x.toInt == tileX && cs.r.y.toInt == tileY)
+        if (cs.r.x.toInt == tileX && cs.r.y.toInt == tileY && !disableCollisionLayers.contains(cs.name))
           return cs.state
       }
       CollisionState.Empty
@@ -128,7 +136,7 @@ class MapCollisionDetector extends BasicCollisionDetector {
       for (i <- collisionTiles.indices) {
         val cs = collisionTiles.get(i)
         val tile: Rectangle = cs.r
-        if (area.overlaps(tile) && (!onlyBlocking || (cs.state eq CollisionState.Blocking))) {
+        if (area.overlaps(tile) && !disableCollisionLayers.contains(cs.name) && (!onlyBlocking || (cs.state eq CollisionState.Blocking))) {
           v1.set(tile.x, tile.y)
           v2.set(tile.x + tile.width, tile.y)
           v3.set(tile.x, tile.y + tile.height)
@@ -160,10 +168,10 @@ class MapCollisionDetector extends BasicCollisionDetector {
   }
 }
 
-case class CollisionSquare (r: Rectangle, state: CollisionState.Value) {
+case class CollisionSquare (name: String, r: Rectangle, state: CollisionState.Value) {
   def xy: (Float, Float) = (r.x, r.y)
   def x: Float = r.x
   def y: Float = r.y
-  def width = r.width
-  def height = r.height
+  def width: Float = r.width
+  def height: Float = r.height
 }

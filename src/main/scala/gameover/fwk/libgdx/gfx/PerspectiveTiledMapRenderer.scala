@@ -65,23 +65,25 @@ class PerspectiveTiledMapRenderer(m: TiledMap, unitScale: Float, spriteBatch: Sp
   }
 
   def renderWallsLayers(): Unit = {
-    wallsLayers.foreach(renderSuppLayerTop(_))
+    wallsLayers.foreach(renderSuppLayer)
   }
 
   def renderTopLayers(): Unit = {
-    topLayers.foreach(renderSuppLayerTop(_))
+    topLayers.foreach(renderSuppLayer)
   }
 
-  private def renderSuppLayerTop(layer: MapLayer): Unit = {
-    batch.begin()
-    layer match {
-      case l: TiledMapTileLayer =>  renderTileLayer(l)
-      case _                        =>
-        for (i <- 0 until layer.getObjects.getCount) {
-          val o = layer.getObjects.get(i)
-          renderObject(o)
-        }
+  private def renderSuppLayer(layer: MapLayer): Unit = {
+    if (layer.isVisible) {
+      batch.begin()
+      layer match {
+        case l: TiledMapTileLayer => renderTileLayer(l)
+        case _ =>
+          for (i <- 0 until layer.getObjects.getCount) {
+            val o = layer.getObjects.get(i)
+            renderObject(o)
+          }
+      }
+      batch.end()
     }
-    batch.end()
   }
 }
