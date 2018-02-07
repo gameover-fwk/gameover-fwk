@@ -1,0 +1,8 @@
+title: Gameover-fwk
+description: The Gameover framework can be used to develop games or ui application with Scala and LibGDX.
+google_analytics: 
+show_downloads: true
+theme: jekyll-theme-cayman
+
+gems:
+  - jekyll-mentions
