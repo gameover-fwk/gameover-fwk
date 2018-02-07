@@ -1,7 +1,8 @@
 # Gameover framework release notes
 
-## 0.2.4
+## 0.2.4 (2018-02-07)
 * change Perspective layer to handle three layers: a floor layer, a walls layer and a top layer. Use property "level" on the map to know where to render the layer.
+* add the availability to disable a layer for collision detector
 
 ## 0.2.3 (2016-09-14)
 

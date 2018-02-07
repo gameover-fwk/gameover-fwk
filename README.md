@@ -26,7 +26,7 @@ dependencies {
 
 With SBT, add dependency:
 ```
-libraryDependencies += "io.github.gameover-fwk" %% "gameover-fwk" % "0.2.3"
+libraryDependencies += "io.github.gameover-fwk" %% "gameover-fwk" % "0.2.4"
 ```
 
 ## Features
