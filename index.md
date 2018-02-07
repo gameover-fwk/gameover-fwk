@@ -13,20 +13,20 @@ With maven, add dependency:
 <dependency>
   <groupId>io.github.gameover-fwk</groupId>
   <artifactId>gameover-fwk_2.11</artifactId>
-  <version>0.2.3</version>
+  <version>0.2.4</version>
 </dependency>
 ```
 
 With gradle, add dependency:
 ```
 dependencies {
-    compile "io.github.gameover-fwk_2.11:gameover-fwk:0.2.3"
+    compile "io.github.gameover-fwk_2.11:gameover-fwk:0.2.4"
 }
 ```
 
 With SBT, add dependency:
 ```
-libraryDependencies += "io.github.gameover-fwk" %% "gameover-fwk" % "0.2.3"
+libraryDependencies += "io.github.gameover-fwk" %% "gameover-fwk" % "0.2.4"
 ```
 
 ## Features
