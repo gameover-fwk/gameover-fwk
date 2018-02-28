@@ -8,9 +8,6 @@ import gameover.fwk.pool.{GridPoint2Pool, Vector2Pool}
 import scala.math.Ordering
 
 class AStar(hComputeStrategy: HComputeStrategy) extends LibGDXHelper {
-  private val opened: GdxArray[Point] = new GdxArray()
-  private val closed: GdxArray[Point] = new GdxArray()
-  private var nearest: Point = null
 
   /**
    * This is the classical method to call to compute an a* path.
@@ -27,6 +24,8 @@ class AStar(hComputeStrategy: HComputeStrategy) extends LibGDXHelper {
    * @return an array of tiles indices to reach path. Returns <code>null</code> if node path is found.
    */
   def findPath(x: Float, y: Float, tx: Float, ty: Float, findClosestPoint: Boolean, collisionDetector: CollisionDetector): GdxArray[GridPoint2] = {
+    val opened = new GdxArray[Point]()
+    val closed = new GdxArray[Point]()
     val ret: GdxArray[GridPoint2] = new GdxArray[GridPoint2]
     val ix: Int = MathUtils.floor(x)
     val iy: Int = MathUtils.floor(y)
@@ -35,15 +34,17 @@ class AStar(hComputeStrategy: HComputeStrategy) extends LibGDXHelper {
     if (ix == itx && iy == ity) {
       return ret
     }
-    var p: Option[Point] = addToOpenedIfElligible(ix, iy, ix, iy, itx, ity, collisionDetector, None, hComputeStrategy)
-    if (p.isDefined) {
-      p = processPath(itx, ity, collisionDetector, p.get, hComputeStrategy)
-      if (p.isDefined) {
-        return computeFinalPath(ix, iy, p.get)
+
+    val nearest = new Nearest()
+    var point: Option[Point] = addToOpenedIfElligible(ix, iy, itx, ity, collisionDetector, None, hComputeStrategy, opened, closed, nearest)
+    if (point.isDefined) {
+      point = processPath(itx, ity, collisionDetector, point.get, hComputeStrategy, opened, closed, nearest)
+      if (point.isDefined) {
+        return computeFinalPath(ix, iy, point.get)
       }
     }
-    if (findClosestPoint && nearest != null) {
-      computeFinalPath(ix, iy, nearest)
+    if (findClosestPoint && nearest.p != null) {
+      computeFinalPath(ix, iy, nearest.p)
     } else {
       null
     }
@@ -136,7 +137,7 @@ class AStar(hComputeStrategy: HComputeStrategy) extends LibGDXHelper {
   private def computeFinalPath(ix: Int, iy: Int, p: Point): GdxArray[GridPoint2] = {
     var point: Point = p
     val ret: GdxArray[GridPoint2] = new Array[GridPoint2]
-    for (i <- 0 to p.index-1) {
+    for (i <- 0 until p.index) {
       ret.insert(0, GridPoint2Pool.obtain(point.x, point.y))
       point = point.ancestor.orNull
     }
@@ -157,14 +158,19 @@ class AStar(hComputeStrategy: HComputeStrategy) extends LibGDXHelper {
     ret
   }
 
-  private def processPath(tx: Int, ty: Int, collisionDetector: CollisionDetector, ancestor: Point, hComputeStrategy: HComputeStrategy): Option[Point] = {
+  class Nearest(var p : Point = null)
+
+  private def processPath(tx: Int, ty: Int, collisionDetector: CollisionDetector, ancestor: Point,
+                          hComputeStrategy: HComputeStrategy,
+                          opened: GdxArray[Point], closed: GdxArray[Point],
+                          nearest: Nearest): Option[Point] = {
     val x: Int = ancestor.x
     val y: Int = ancestor.y
     val a = Some(ancestor)
-    addToOpenedIfElligible(x - 1, y, x, y, tx, ty, collisionDetector, a, hComputeStrategy)
-    addToOpenedIfElligible(x, y - 1, x, y, tx, ty, collisionDetector, a, hComputeStrategy)
-    addToOpenedIfElligible(x, y + 1, x, y, tx, ty, collisionDetector, a, hComputeStrategy)
-    addToOpenedIfElligible(x + 1, y, x, y, tx, ty, collisionDetector, a, hComputeStrategy)
+    addToOpenedIfElligible(x - 1, y, tx, ty, collisionDetector, a, hComputeStrategy, opened, closed, nearest)
+    addToOpenedIfElligible(x, y - 1, tx, ty, collisionDetector, a, hComputeStrategy, opened, closed, nearest)
+    addToOpenedIfElligible(x, y + 1, tx, ty, collisionDetector, a, hComputeStrategy, opened, closed, nearest)
+    addToOpenedIfElligible(x + 1, y, tx, ty, collisionDetector, a, hComputeStrategy, opened, closed, nearest)
     if (ancestor.is(tx, ty)) {
       a
     } else {
@@ -172,44 +178,51 @@ class AStar(hComputeStrategy: HComputeStrategy) extends LibGDXHelper {
       closed ::= ancestor
       if (opened.nonEmpty) {
         val lowest = opened.min(Ordering.by((p: Point)=>p.f))
-        processPath(tx, ty, collisionDetector, lowest, hComputeStrategy)
+        processPath(tx, ty, collisionDetector, lowest, hComputeStrategy, opened, closed, nearest)
       } else {
         None
       }
     }
   }
 
-  private def addToOpenedIfElligible(x: Int, y: Int, previousX: Int, previousY: Int, targetX: Int, targetY: Int,
-                                         collisionDetector: CollisionDetector, ancestor: Option[Point], hComputeStrategy: HComputeStrategy): Option[Point] = {
-    var p: Point = null
+  private def addToOpenedIfElligible(x: Int, y: Int,
+                                     targetX: Int, targetY: Int,
+                                     collisionDetector: CollisionDetector,
+                                     ancestor: Option[Point],
+                                     hComputeStrategy: HComputeStrategy,
+                                     opened: GdxArray[Point],
+                                     closed: GdxArray[Point],
+                                     nearest: Nearest): Option[Point] = {
+
     if (!closed.exists(_.is(x, y))) {
-      try {
-        if (!collisionDetector.checkCollision(x, y, onlyBlocking = false)) {
-          val found: Option[Point] = opened.find(_.is(x, y))
-          var g: Int = 0
-          if (ancestor.isDefined) {
-            g = if ((ancestor.get.x == x) || (ancestor.get.y == y)) 10 else 14
-          }
-          val h: Int = hComputeStrategy.h(x, y, targetX, targetY, collisionDetector)
-          if (found.isDefined) {
-            p = found.get
+      if (!collisionDetector.checkCollision(x, y, onlyBlocking = false)) {
+        val found: Option[Point] = opened.find(_.is(x, y))
+        val g = ancestor match {
+          case Some(a) if a.x == x => 10
+          case Some(a) if a.y == y => 10
+          case Some(a) => 14
+          case _ => 0
+        }
+        val h = hComputeStrategy.h(x, y, targetX, targetY, collisionDetector)
+        val point = found match {
+          case Some(p) =>
             if (g + h < p.f) {
               p.g = g
               p.h = h
               p.ancestor = ancestor
             }
-          }
-          else {
-            p = new Point(x, y, g, h, ancestor)
+            p
+          case None =>
+            val p = new Point(x, y, g, h, ancestor)
             opened ::= p
-          }
-          if (nearest == null || h < nearest.h || (h == nearest.h && g + h < nearest.f)) {
-            nearest = p
-          }
+            p
         }
-      } finally {
+        if (nearest.p == null || h < nearest.p.h || (h == nearest.p.h && g + h < nearest.p.f)) {
+          nearest.p = point
+        }
+        return Some(point)
       }
     }
-    Option.apply(p)
+    None
   }
 }

@@ -36,35 +36,35 @@ class GraphicsLoader() extends Disposable with Logs with LibGDXHelper {
     logInfo(LogType.GFX, "Scan images on file system...")
     val internal: FileHandle = Gdx.files.internal("")
     logInfo(LogType.GFX, "Scan internal storage " + internal)
-    loadGfx(internal.list)
-
-    //    if (Gdx.files.isExternalStorageAvailable()) {
-    //      FileHandle external = Gdx.files.external("");
-    //      LogUtils.info(LogUtils.Type.GFX, "Scan external storage " + Gdx.files.getExternalStoragePath());
-    //      loadGfx(external.list());
-    //    }
+    loaded += loadGfx(internal.list, true)
 
     if (Gdx.files.isLocalStorageAvailable) {
       val local: FileHandle = Gdx.files.local("")
       logInfo(LogType.GFX, "Scan local storage " + Gdx.files.getLocalStoragePath)
-      loaded += loadGfx(local.list)
+      loaded += loadGfx(local.list, false)
     }
+
 
     logInfo(LogType.GFX, "Finished loading images! Nb files loaded: " + loaded)
   }
 
-  private def loadGfx(fileHandles: Array[FileHandle]): Int = {
+  private def loadGfx(fileHandles: Array[FileHandle], fixPath: Boolean): Int = {
     var loaded = 0
     if (fileHandles != null) {
       for (fh <- fileHandles) {
-        if (fh.name.endsWith(".png")) {
-          load(fh)
-          loaded += 1
+        val fhl = if (fh.path.startsWith("/") && fixPath) Gdx.files.internal(fh.path().substring(1)) else fh
+        if (fhl.name.endsWith(".png")) {
+          if (fhl.exists()) {
+            load(fhl)
+            loaded += 1
+          } else {
+            logInfo(LogType.GFX, s"Ignore $fhl because it does not 'exist'")
+          }
         }
-        val list: Array[FileHandle] = fh.list
+        val list: Array[FileHandle] = fhl.list
         if (list != null && list.length > 0) {
-          logInfo(LogType.GFX, "Scan " + fh)
-          loaded += loadGfx(list)
+          logInfo(LogType.GFX, "Scan " + fhl)
+          loaded += loadGfx(list, fixPath)
         }
       }
     }
