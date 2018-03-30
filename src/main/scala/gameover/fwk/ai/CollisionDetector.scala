@@ -22,9 +22,19 @@ trait CollisionDetector {
   def checkCollision(area: Rectangle, movingSpriteVelocity: Vector2, onlyBlocking: Boolean): GdxArray[Rectangle]
 
   /**
+    * Check if a point has a direct view to a target point.
+    */
+  def isDirect(x: Float, y: Float, targetX: Float, targetY: Float, onlyBlocking: Boolean): Boolean
+
+  /**
    * Check if a sprite defined by its area has a direct view to a target point.
    */
-  def isDirect(area: Rectangle, targetX: Float, targetY: Float, onlyBlocking: Boolean): Boolean
+  def isDirect(visionArea: Rectangle, targetX: Float, targetY: Float, onlyBlocking: Boolean): Boolean
+
+  /**
+    * Check if a sprite defined by its area has a direct view to a target area.
+    */
+  def isDirect(visionArea: Rectangle, targetArea: Rectangle, onlyBlocking: Boolean): Boolean
 
   def checkCollision(area: Rectangle, onlyBlocking: Boolean) : Boolean = {
     val state: CollisionState.Value = checkPosition(area)

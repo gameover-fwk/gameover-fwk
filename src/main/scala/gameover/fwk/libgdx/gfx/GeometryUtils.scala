@@ -10,14 +10,14 @@ object GeometryUtils extends LibGDXHelper{
 
   def computeTiledIntersectionPoints(x1: Float, y1: Float, x2: Float, y2: Float): GdxArray[Vector2] = {
     val ret = new GdxArray[Vector2]
-    val diffX: Float = x2 - x1
-    val fX1: Float = com.badlogic.gdx.math.MathUtils.floor(x1)
-    val diffY: Float = y2 - y1
-    val fY1: Float = com.badlogic.gdx.math.MathUtils.floor(y1)
-    val alpha: Double = Math.atan2(diffY, diffX)
-    val angle: Double = Math.abs(alpha % (Math.PI / 2d))
-    val inverseAxis: Boolean = alpha > Math.PI / 2d || alpha < -Math.PI / 2d
-    val alphaTan: Float = Math.tan(angle).toFloat
+    val diffX = x2 - x1
+    val fX1 = com.badlogic.gdx.math.MathUtils.floor(x1)
+    val diffY = y2 - y1
+    val fY1 = com.badlogic.gdx.math.MathUtils.floor(y1)
+    val alpha = Math.atan2(diffY, diffX)
+    val angle = Math.abs(alpha % (Math.PI / 2d))
+    val inverseAxis = alpha > Math.PI / 2d || alpha < -Math.PI / 2d
+    val alphaTan = Math.tan(angle).toFloat
     val xSign: Float = Math.signum(diffX)
     val ySign: Float = Math.signum(diffY)
     val xs = new GdxArray[Float]

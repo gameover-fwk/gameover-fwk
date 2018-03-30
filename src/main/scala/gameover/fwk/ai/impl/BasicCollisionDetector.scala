@@ -9,28 +9,136 @@ import gameover.fwk.pool.Vector2Pool
 
 abstract class BasicCollisionDetector extends CollisionDetector with LibGDXHelper {
 
-  override def isDirect(area: Rectangle, targetX: Float, targetY: Float, onlyBlocking: Boolean): Boolean = {
-    val center: Vector2 = area.getCenter(Vector2Pool.obtain())
-    val x = center.x
-    val y = center.y
-    Vector2Pool.free(center)
-    val isGoingTop: Boolean = Math.signum(targetY - y) >= 0f
-    val isGoingRight: Boolean = Math.signum(targetX - x) >= 0f
-    val halfWidth = area.width / 2
-    val halfHeight = area.height / 2
-    val diffX1: Float = if (isGoingRight) -1  else 1
-    val diffY1: Float = if (isGoingTop) 1 else -1
-    val intersectionPoints: GdxArray[Vector2] = GeometryUtils.computeTiledIntersectionPoints(x + diffX1 * halfWidth, y + diffY1 * halfHeight, targetX + diffX1 * halfWidth, targetY + diffY1 * halfHeight)
-    val diffX2: Float = if (isGoingRight) 1 else 1
-    val diffY2: Float = if (isGoingTop) -1 else 1
-    intersectionPoints.addAll(GeometryUtils.computeTiledIntersectionPoints(x + diffX2 * halfWidth, y + diffY2 * halfHeight, targetX + diffX2 * halfWidth, targetY + diffY2 * halfHeight))
+  override def isDirect(visionArea: Rectangle, targetArea: Rectangle, onlyBlocking: Boolean): Boolean = {
+    val centerVisionArea = visionArea.getCenter(Vector2Pool.obtain())
+    val x = centerVisionArea.x
+    val y = centerVisionArea.y
+    Vector2Pool.free(centerVisionArea)
+    val centerTargetArea = targetArea.getCenter(Vector2Pool.obtain())
+    val tx = centerTargetArea.x
+    val ty = centerTargetArea.y
+    Vector2Pool.free(centerVisionArea)
+    val dirs = directions(x, y, tx, ty)
+
+    val xys = new GdxArray[(Float, Float)]
+    val txys = new GdxArray[(Float, Float)]
+    if (dirs.top) {
+      if (dirs.right) {
+        xys.add((visionArea.x + visionArea.width, visionArea.y))
+        xys.add((visionArea.x, visionArea.y + visionArea.height))
+        txys.add((targetArea.x + targetArea.width, targetArea.y))
+        txys.add((targetArea.x, targetArea.y + targetArea.height))
+      } else if (dirs.left) {
+        xys.add((visionArea.x, visionArea.y))
+        xys.add((visionArea.x + visionArea.width, visionArea.y + visionArea.height))
+        txys.add((targetArea.x, targetArea.y))
+        txys.add((targetArea.x + targetArea.width, targetArea.y + targetArea.height))
+      } else {
+        xys.add((visionArea.x, visionArea.y + visionArea.height))
+        xys.add((visionArea.x + visionArea.width, visionArea.y + visionArea.height))
+        txys.add((targetArea.x, targetArea.y))
+        txys.add((targetArea.x + targetArea.width, targetArea.y))
+      }
+    } else if (dirs.bottom) {
+      if (dirs.right) {
+        xys.add((visionArea.x, visionArea.y))
+        xys.add((visionArea.x + visionArea.width, visionArea.y + visionArea.height))
+        txys.add((targetArea.x, targetArea.y))
+        txys.add((targetArea.x + targetArea.width, targetArea.y + targetArea.height))
+      } else if (dirs.left) {
+        xys.add((visionArea.x, visionArea.y + visionArea.height))
+        xys.add((visionArea.x + visionArea.width, visionArea.y))
+        txys.add((targetArea.x, targetArea.y + targetArea.height))
+        txys.add((targetArea.x + targetArea.width, targetArea.y))
+      } else {
+        xys.add((visionArea.x, visionArea.y))
+        xys.add((visionArea.x + visionArea.width, visionArea.y))
+        txys.add((targetArea.x, targetArea.y + targetArea.height))
+        txys.add((targetArea.x + targetArea.width, targetArea.y + targetArea.height))
+      }
+    } else {
+      if (dirs.right) {
+        xys.add((visionArea.x + visionArea.width, visionArea.y))
+        xys.add((visionArea.x + visionArea.width, visionArea.y + visionArea.height))
+        txys.add((targetArea.x, targetArea.y))
+        txys.add((targetArea.x, targetArea.y + targetArea.height))
+      } else if (dirs.left) {
+        xys.add((visionArea.x, visionArea.y))
+        xys.add((visionArea.x, visionArea.y + visionArea.height))
+        txys.add((targetArea.x + targetArea.width, targetArea.y))
+        txys.add((targetArea.x + targetArea.width, targetArea.y + targetArea.height))
+      }
+    }
+    for (xy <- xys.items) {
+      for (txy <- txys.items) {
+        if (isDirect(xy._1, xy._2, txy._1, txy._2, onlyBlocking))
+          return true
+      }
+    }
+    false
+  }
+
+  def directions(x: Float, y: Float, tx: Float, ty: Float) : Directions = {
+    val diffX = Math.signum(tx - x)
+    val diffY = Math.signum(ty - y)
+    Directions(diffY > 0f, diffY < 0f, diffX < 0f, diffX > 0f)
+  }
+
+  case class Directions(top: Boolean, bottom: Boolean, left: Boolean, right: Boolean)
+
+  override def isDirect(visionArea: Rectangle, tx: Float, ty: Float, onlyBlocking: Boolean) : Boolean = {
+    val centerVisionArea = visionArea.getCenter(Vector2Pool.obtain())
+    val x = centerVisionArea.x
+    val y = centerVisionArea.y
+    Vector2Pool.free(centerVisionArea)
+    val xys = new GdxArray[(Float, Float)]
+    val dirs = directions(x, y, tx, ty)
+    if (dirs.top) {
+      if (dirs.right) {
+        xys.add((visionArea.x + visionArea.width, visionArea.y))
+        xys.add((visionArea.x, visionArea.y + visionArea.height))
+      } else if (dirs.left) {
+        xys.add((visionArea.x, visionArea.y))
+        xys.add((visionArea.x + visionArea.width, visionArea.y + visionArea.height))
+      } else {
+        xys.add((visionArea.x, visionArea.y + visionArea.height))
+        xys.add((visionArea.x + visionArea.width, visionArea.y + visionArea.height))
+      }
+    } else if (dirs.bottom) {
+      if (dirs.right) {
+        xys.add((visionArea.x, visionArea.y))
+        xys.add((visionArea.x + visionArea.width, visionArea.y + visionArea.height))
+      } else if (dirs.left) {
+        xys.add((visionArea.x, visionArea.y + visionArea.height))
+        xys.add((visionArea.x + visionArea.width, visionArea.y))
+      } else {
+        xys.add((visionArea.x, visionArea.y))
+        xys.add((visionArea.x + visionArea.width, visionArea.y))
+      }
+    } else {
+      if (dirs.right) {
+        xys.add((visionArea.x + visionArea.width, visionArea.y))
+        xys.add((visionArea.x + visionArea.width, visionArea.y + visionArea.height))
+      } else if (dirs.left) {
+        xys.add((visionArea.x, visionArea.y))
+        xys.add((visionArea.x, visionArea.y + visionArea.height))
+      }
+    }
+    for (xy <- xys) {
+      if (isDirect(xy._1, xy._2, tx, ty, onlyBlocking))
+        return true
+    }
+    false
+  }
+
+  override def isDirect(x: Float, y: Float, tx: Float, ty: Float, onlyBlocking: Boolean) : Boolean = {
+    val intersectionPoints = GeometryUtils.computeTiledIntersectionPoints(x, y, tx, ty)
     try {
       !checkCollisions(intersectionPoints, onlyBlocking)
     } finally {
       Vector2Pool.free(intersectionPoints)
     }
   }
-
 
   private def checkCollisions(intersections: GdxArray[Vector2], onlyBlocking: Boolean): Boolean = {
     for (intersection <- intersections) {
