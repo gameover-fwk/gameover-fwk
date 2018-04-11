@@ -4,6 +4,7 @@
 * Fix graphics loader for a strange bug when loading data from internal storage on android
 * Fix AStar
 * Fix direct view near wall
+* Fix straight move check and use it for SmartPathFinding
 
 ## 0.2.4 (2018-02-07)
 * change Perspective layer to handle three layers: a floor layer, a walls layer and a top layer. Use property "level" on the map to know where to render the layer.

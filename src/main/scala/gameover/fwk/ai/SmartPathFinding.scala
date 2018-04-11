@@ -13,7 +13,7 @@ class SmartPathFinding(hComputeStrategy: HComputeStrategy) {
   val aStar = new AStar(hComputeStrategy)
 
   def findSmoothPath(area: Rectangle, targetX: Float, targetY: Float, findNearestPoint: Boolean, collisionDetector: CollisionDetector): GdxArray[Vector2] = {
-    if (collisionDetector.isDirect(area, targetX, targetY, onlyBlocking = false)) {
+    if (collisionDetector.canMoveStraightToPoint(area, targetX, targetY)) {
       val ret: GdxArray[Vector2] = Vector2Pool.obtainAsGdxArray(1)
       ret.get(0).set(targetX, targetY)
       return ret
