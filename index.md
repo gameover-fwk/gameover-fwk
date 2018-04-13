@@ -3,7 +3,7 @@
 
 # Gameover framework
 This framework can be used to develop games or ui application based on [LibGDX](https://libgdx.badlogicgames.com)
-The code is developed with scala 2.11.8 and has dependencies with LibGDX 1.9.3
+The code is developed with scala 2.11.12 and has dependencies with LibGDX 1.9.8
 The code is available on [Github](https://github.com/gameover-fwl/gameover-fwk)
 
 ## Use the framework
@@ -13,20 +13,20 @@ With maven, add dependency:
 <dependency>
   <groupId>io.github.gameover-fwk</groupId>
   <artifactId>gameover-fwk_2.11</artifactId>
-  <version>0.2.4</version>
+  <version>0.2.5</version>
 </dependency>
 ```
 
 With gradle, add dependency:
 ```
 dependencies {
-    compile "io.github.gameover-fwk_2.11:gameover-fwk:0.2.4"
+    compile "io.github.gameover-fwk_2.11:gameover-fwk:0.2.5"
 }
 ```
 
 With SBT, add dependency:
 ```
-libraryDependencies += "io.github.gameover-fwk" %% "gameover-fwk" % "0.2.4"
+libraryDependencies += "io.github.gameover-fwk" %% "gameover-fwk" % "0.2.5"
 ```
 
 ## Features
