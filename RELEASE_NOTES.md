@@ -1,5 +1,8 @@
 # Gameover framework release notes
 
+## 0.2.6
+* TODO
+
 ## 0.2.5 (2018-04-13)
 * Fix graphics loader for a strange bug when loading data from internal storage on android
 * Fix AStar
