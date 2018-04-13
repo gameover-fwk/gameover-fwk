@@ -1,10 +1,10 @@
 package gameover.fwk.ai
 
 import com.badlogic.gdx.math.{Rectangle, Vector2}
-import gameover.fwk.pool.Vector2Pool
 import com.badlogic.gdx.utils.{Array => GdxArray}
 import gameover.fwk.libgdx.utils.LibGDXHelper
 import gameover.fwk.math.MathUtils
+import gameover.fwk.pool.Vector2Pool
 
 /**
  * This class is an attempt to make a smart path finding. The algorithm first check
