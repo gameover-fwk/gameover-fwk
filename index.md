@@ -39,7 +39,7 @@ libraryDependencies += "io.github.gameover-fwk" %% "gameover-fwk" % "0.2.6"
 * An object pool trait and some implementation for most used libgdx class (Vector2, Rectangle...)
 * Some missing math, gfx, polygons utilities
 
-See [Release notes](RELEASE_NOTES.md) for a list of changes between version
+See [Release notes](https://github.com/gameover-fwk/gameover-fwk/blob/master/RELEASE_NOTES.md) for a list of changes between versions
 
 ## Build framework and deploy on local repository
 To build the framework, just run gradle task:
