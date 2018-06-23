@@ -1,7 +1,7 @@
 # Gameover framework release notes
 
-## 0.2.6
-* TODO
+## 0.2.6 (2018-06-23)
+* Enhances smart smoot path finding to handle an origin area with a center in the void
 
 ## 0.2.5 (2018-04-13)
 * Fix graphics loader for a strange bug when loading data from internal storage on android

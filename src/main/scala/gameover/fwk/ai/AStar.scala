@@ -50,12 +50,25 @@ class AStar(hComputeStrategy: HComputeStrategy) extends LibGDXHelper {
     }
   }
 
+  /** Compute smooth path to a target point from an area.
+   * If the center of the starting area is in the void, we look at all edges and search for each of
+   * these edges  to find the shortest smart path.
+   */
   def findSmoothPath(area: Rectangle, tx: Float, ty: Float, findClosestPoint: Boolean, collisionDetector: CollisionDetector): GdxArray[Vector2] = {
     val center = area.getCenter(Vector2Pool.obtain())
-    val path: GdxArray[GridPoint2] = findPath(center.x, center.y, tx, ty, findClosestPoint, collisionDetector)
+    val points = if (collisionDetector.checkPosition(center.x, center.y) == CollisionState.Void) {
+      gameover.fwk.math.MathUtils.edges(area) filter { case (x, y) => collisionDetector.checkPosition(x, y) == CollisionState.Empty }
+    } else (center.x, center.y) :: Nil
+    val (x, y, path): (Float, Float, GdxArray[GridPoint2]) = points.map(p => (p, findPath(p._1, p._2, tx, ty, findClosestPoint, collisionDetector))).toList sortBy {
+      case (_, pathPoints) => (if (pathPoints.last.x == tx && pathPoints.last.y == ty) 0 else 1, gameover.fwk.math.MathUtils.distanceSum(pathPoints.toArray()))
+    } headOption match {
+      case Some(((x, y), path)) => (x, y, path)
+      case None => (0, 0, null)
+    }
+
     if (path != null) {
       val smoothPath: GdxArray[Vector2] = new GdxArray[Vector2]
-      computePointForSmoothPathAuxRecursively(area, path, 0, MathUtils.floor(center.x), MathUtils.floor(center.y), smoothPath)
+      computePointForSmoothPathAuxRecursively(area, path, 0, MathUtils.floor(x), MathUtils.floor(y), smoothPath)
       if (path.nonEmpty) {
         val last: GridPoint2 = path.peek()
         if (MathUtils.floor(tx) == last.x && MathUtils.floor(ty) == last.y) smoothPath.add(Vector2Pool.obtain(tx, ty))
