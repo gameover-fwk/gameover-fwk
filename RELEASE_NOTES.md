@@ -1,6 +1,8 @@
 # Gameover framework release notes
 
-## 0.2.7
+## 1.0.0
+* Moving framework to kotlin. Old scala is still available in a branch.
+* Upgrade version of libgdx to 1.9.10
 TODO
 
 ## 0.2.6 (2018-06-23)
