@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.GridPoint2
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
+import gameover.fwk.math.MathUtils.edges
 import gameover.fwk.pool.GridPoint2Pool
 import gameover.fwk.pool.Vector2Pool
 
@@ -57,7 +58,7 @@ class AStar(val hComputeStrategy: HComputeStrategy) {
     fun findSmoothPath(area: Rectangle, tx: Float, ty: Float, findClosestPoint: Boolean, collisionDetector: CollisionDetector): ArrayList<Vector2>? {
         val center = area.getCenter(Vector2Pool.obtain())
         val points = if (collisionDetector.checkPosition(center.x, center.y) == CollisionState.Void)
-            gameover.fwk.math.MathUtils.edges(area).filter { (x, y) -> collisionDetector.checkPosition(x, y) == CollisionState.Empty }
+            edges(area).filter { (x, y) -> collisionDetector.checkPosition(x, y) == CollisionState.Empty }
         else
             arrayListOf(Pair(center.x, center.y))
         val (x, y, path) = points.map { p -> Pair(p, findPath(p.first, p.second, tx, ty, findClosestPoint, collisionDetector)) }.sortedBy {
